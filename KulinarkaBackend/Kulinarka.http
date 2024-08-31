@@ -1,0 +1,6 @@
+@Kulinarka_HostAddress = http://localhost:5038
+
+GET {{Kulinarka_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
