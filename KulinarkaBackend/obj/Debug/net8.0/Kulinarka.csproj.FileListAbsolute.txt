@@ -274,3 +274,4 @@ C:\Users\lukai\Desktop\Kulinarka\KulinarkaBackend\obj\Debug\net8.0\refint\Kulina
 C:\Users\lukai\Desktop\Kulinarka\KulinarkaBackend\obj\Debug\net8.0\Kulinarka.pdb
 C:\Users\lukai\Desktop\Kulinarka\KulinarkaBackend\obj\Debug\net8.0\Kulinarka.genruntimeconfig.cache
 C:\Users\lukai\Desktop\Kulinarka\KulinarkaBackend\obj\Debug\net8.0\ref\Kulinarka.dll
+C:\Users\lukai\Desktop\Kulinarka\KulinarkaBackend\obj\Debug\net8.0\Kulinarka.sourcelink.json
