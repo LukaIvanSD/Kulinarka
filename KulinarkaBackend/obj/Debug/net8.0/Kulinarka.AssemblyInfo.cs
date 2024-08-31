@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Kulinarka")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09c434374f470738f331333e09d1deb0c311d195")]
 [assembly: System.Reflection.AssemblyProductAttribute("Kulinarka")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Kulinarka")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
