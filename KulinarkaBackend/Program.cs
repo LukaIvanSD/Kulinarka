@@ -12,7 +12,11 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader();
         });
 });
-
+builder.Services.AddSession(option => {
+    option.IdleTimeout = TimeSpan.FromMinutes(10);
+    option.Cookie.HttpOnly = true;
+    option.IOTimeout = TimeSpan.FromMinutes(10);
+});
 // Add services to the container.
 builder.Configuration.AddJsonFile("configDb.json", optional: false, reloadOnChange: true);
 builder.Services.AddControllers();
@@ -34,6 +38,8 @@ app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllers();
 
