@@ -38,8 +38,7 @@ builder.Services.AddScoped<ILoginService,LoginService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Adds DbContext
-builder.Services.AddDbContext<DbContextTest>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
 var app = builder.Build();
 

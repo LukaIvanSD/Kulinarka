@@ -13,9 +13,9 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly DbContextTest _context;
+        private readonly AppDbContext _context;
         private readonly ILoginService _loginService;
-        public UserController(DbContextTest context,ILoginService loginService)
+        public UserController(AppDbContext context,ILoginService loginService)
         {
             _context = context;
             this._loginService = loginService;
