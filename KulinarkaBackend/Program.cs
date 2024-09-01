@@ -15,7 +15,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddSession(option => {
     option.IdleTimeout = TimeSpan.FromMinutes(10);
     option.Cookie.HttpOnly = true;
-    option.IOTimeout = TimeSpan.FromMinutes(10);
+    option.IOTimeout = TimeSpan.FromSeconds(20);
 });
 // Add services to the container.
 builder.Configuration.AddJsonFile("configDb.json", optional: false, reloadOnChange: true);
