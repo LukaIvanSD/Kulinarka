@@ -2,11 +2,12 @@
 {
     public class CookieService
     {
-        public static void SetCookie(HttpContext httpContext, string key, string value, int? daysValid)
+        public  const  string _loginCookie = "Credentials";
+        public static void SetCookie(HttpContext httpContext,string key,string value,int? daysValid)
         {
             CookieOptions option = new CookieOptions();
             option.Expires = daysValid.HasValue ? DateTime.Now.AddDays(daysValid.Value) : DateTime.Now.AddYears(5);
-            httpContext.Response.Cookies.Append(key, value, option);
+             httpContext.Response.Cookies.Append(key, value, option);
         }
         public static string GetCookie(HttpContext httpContext, string key)
         {
