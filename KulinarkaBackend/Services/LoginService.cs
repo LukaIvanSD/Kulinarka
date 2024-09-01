@@ -31,7 +31,6 @@ namespace Kulinarka.Services
         }
         public async Task LogInWithCookieAsync(string username)
         {
-            Debug.WriteLine("KRAAALJ");
             User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null)
             {
