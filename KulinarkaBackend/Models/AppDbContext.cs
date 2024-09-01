@@ -2,9 +2,9 @@
 
 namespace Kulinarka.Models
 {
-    public class DbContextTest:DbContext
+    public class AppDbContext:DbContext
     {
-        public DbContextTest(DbContextOptions<DbContextTest> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
         public DbSet<User> Users { get; set; }
