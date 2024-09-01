@@ -11,8 +11,8 @@ namespace WebApplication1.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly DbContextTest _context;
-        public UserController(DbContextTest context)
+        private readonly AppDbContext _context;
+        public UserController(AppDbContext context)
         {
             _context = context;
         }
