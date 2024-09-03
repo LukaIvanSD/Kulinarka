@@ -1,4 +1,5 @@
 using Kulinarka.Interfaces;
+using Kulinarka.Middleware;
 using Kulinarka.Models;
 using Kulinarka.Services;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +61,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.UseSession();
+
+app.UseReqestLoggger();
 
 app.MapControllers();
 
