@@ -1,3 +1,4 @@
+using Kulinarka.Middleware;
 using Kulinarka.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,8 @@ app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseReqestLoggger();
 
 app.MapControllers();
 
