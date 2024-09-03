@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System.ComponentModel.DataAnnotations;
 
 namespace Kulinarka.Models
 {
     public enum Gender
     {
-        Male = 0,
-        Female = 1
+        Male,
+        Female
     }
     public class User
     {
@@ -21,13 +23,14 @@ namespace Kulinarka.Models
         public string LastName { get; set; }
 
         [Required(ErrorMessage ="Gender is required")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public Gender Gender { get; set; }
 
         [Required(ErrorMessage ="Birthday is required")]
         public DateOnly Birthday { get; set; }
 
         [MaxLength(100)]
-        public string Location { get; set; }
+        public string? Location { get; set; }
 
         [Required(ErrorMessage ="E-mail is required")]
         [MaxLength(100)]
@@ -43,9 +46,8 @@ namespace Kulinarka.Models
         public string Password { get; set; }
 
         public DateTime DateOfCreation { get; set; }
+        public string? Bio { get; set; }
 
-        public string Bio { get; set; }
-
-        public byte[] Picture { get; set; }
+        public byte[]? Picture { get; set; }
     }
 }
