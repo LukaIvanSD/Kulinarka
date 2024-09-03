@@ -12,33 +12,33 @@ namespace Kulinarka.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="First name is required") ]
         [MaxLength(100)]
         public string FirstName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Last name is required")]
         [MaxLength(100)]
         public string LastName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Gender is required")]
         public Gender Gender { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Birthday is required")]
         public DateOnly Birthday { get; set; }
 
         [MaxLength(100)]
         public string Location { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="E-mail is required")]
         [MaxLength(100)]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Username is required")]
         [MaxLength(100)]
         public string Username { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Password is required")]
         [MaxLength(100)]
         public string Password { get; set; }
 
