@@ -1,6 +1,7 @@
 ﻿using Kulinarka.Models;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Kulinarka.Middleware
@@ -11,14 +12,14 @@ namespace Kulinarka.Middleware
         private List<Log> logs;
         private const int batchSize = 10;
         private int currentBatchSize = 0;
-        private readonly AppDbContext dbContext;
         private readonly object lockObj = new object();
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public RequestLogger(RequestDelegate next, AppDbContext dbContext)
+        public RequestLogger(RequestDelegate next, IServiceScopeFactory scopeFactory)
         {
+            this.scopeFactory = scopeFactory;
             this.next = next;
-            this.dbContext = dbContext;
             logs = new List<Log>();
         }
 
@@ -37,6 +38,7 @@ namespace Kulinarka.Middleware
             {
                 logs.Add(newLog);
                 currentBatchSize++;
+                Debug.WriteLine($"Added log. Current batch size: {currentBatchSize}");
             }
 
             if (currentBatchSize >= batchSize)
@@ -71,9 +73,12 @@ namespace Kulinarka.Middleware
                     logs = new List<Log>();
                     currentBatchSize = 0;
                 }
-
-                await dbContext.Logs.AddRangeAsync(logsToSave);
-                await dbContext.SaveChangesAsync();
+                using (var scope = scopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    await dbContext.Logs.AddRangeAsync(logsToSave);
+                    await dbContext.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -81,14 +86,14 @@ namespace Kulinarka.Middleware
             }
             finally
             {
-                semaphore.Release(); // Oslobađanje semafora
+                semaphore.Release();
             }
         }
 
     }
     public static class RequestLoggerExtensions
     {
-        public static IApplicationBuilder UseReqestLoggger(this IApplicationBuilder builder) {
+        public static IApplicationBuilder UseReqestLogger(this IApplicationBuilder builder) {
             return builder.UseMiddleware<RequestLogger>();
         }
     }

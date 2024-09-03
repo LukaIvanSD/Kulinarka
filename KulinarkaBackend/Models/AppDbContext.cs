@@ -17,7 +17,14 @@ namespace Kulinarka.Models
                 .Property(u => u.Gender)
                 .HasConversion(genderConverter);
 
+            modelBuilder.Entity<Log>()
+           .Property(l => l.Duration)
+           .HasConversion(
+               v => v.Ticks,
+               v => TimeSpan.FromTicks(v));
+
             base.OnModelCreating(modelBuilder);
+
         }
     }
 

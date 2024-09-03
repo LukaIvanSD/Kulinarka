@@ -58,11 +58,11 @@ app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseSession();
 
-app.UseReqestLoggger();
+app.UseAuthorization();
+
+app.UseReqestLogger();
 
 app.MapControllers();
 

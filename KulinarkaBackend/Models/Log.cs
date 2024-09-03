@@ -1,12 +1,24 @@
-﻿namespace Kulinarka.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Kulinarka.Models
 {
     public class Log
     {
+        [Key]
         public int Id { get; set; }
+        [Required]
+        [MaxLength(10)]
         public string Method { get; set; }
+        [Required]
+        [MaxLength(70)]
         public string Path { get; set; }
+        [Required]
         public TimeSpan Duration { get; set; }
+        [Required]
+        [MaxLength(200)]
         public string UserAgent { get; set; }
+        [Required]
+        [MaxLength(200)]
         public string Referer { get; set; }
 
     }
