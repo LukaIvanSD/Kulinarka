@@ -7,11 +7,11 @@ namespace Kulinarka.Services
 {
     public class LoginService: ILoginService
     {
-        private readonly DbContextTest dbContext;
+        private readonly AppDbContext dbContext;
         private readonly HttpContext context;
         private readonly ICookieService cookieService;
         private readonly ISessionService sessionService;
-        public LoginService(DbContextTest dbContext,IHttpContextAccessor httpContextAccessor,ICookieService cookieService,ISessionService sessionService)
+        public LoginService(AppDbContext dbContext,IHttpContextAccessor httpContextAccessor,ICookieService cookieService,ISessionService sessionService)
         {
             this.dbContext = dbContext;
             this.context = httpContextAccessor.HttpContext;
