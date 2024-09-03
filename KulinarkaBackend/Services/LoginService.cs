@@ -19,6 +19,33 @@ namespace Kulinarka.Services
             this.sessionService = sessionService;
 
         }
+        public async Task<User> LogInAsync(string username, string password,bool rememberMe)
+        {
+            User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
+            if (user == null)
+                return null;
+            SetUserSession(user);
+            if (rememberMe)
+                SetLoginCookie(user.Username);
+            return user;
+        }
+        public async Task<bool>LogOutAsync()
+        {
+            if (!await IsLoggedInAsync())
+                return false;
+            sessionService.RemoveSession(context, SessionService.loginSession);
+            cookieService.RemoveCookie(context, CookieService._loginCookie);
+            return true;
+        }
+        private void SetUserSession(User user)
+        {
+            sessionService.SetSession<User>(context, SessionService.loginSession, user);
+        }
+
+        private void SetLoginCookie(string username)
+        {
+            cookieService.SetCookie(context, CookieService._loginCookie, username);
+        }
         public async Task<bool> IsLoggedInAsync()
         {
             string cookie = cookieService.GetCookie(context, CookieService._loginCookie);
@@ -31,13 +58,17 @@ namespace Kulinarka.Services
         }
         public async Task LogInWithCookieAsync(string username)
         {
-            Debug.WriteLine("KRAAALJ");
             User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null)
             {
                 throw new Exception("User not found");
             }
             sessionService.SetSession<User>(context, SessionService.loginSession,user);
+        }
+        public async Task<User> GetSessionAsync()
+        {
+            await IsLoggedInAsync();
+            return sessionService.GetSession<User>(context, SessionService.loginSession);
         }
 
     }
