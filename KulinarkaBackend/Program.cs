@@ -2,6 +2,8 @@ using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +29,15 @@ builder.Services.AddSession(option => {
 
 // Add services to the container.
 builder.Configuration.AddJsonFile("configDb.json", optional: false, reloadOnChange: true);
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ICookieService, CookieService>();
 builder.Services.AddSingleton<ISessionService, SessionService>();
 builder.Services.AddScoped<ILoginService,LoginService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
