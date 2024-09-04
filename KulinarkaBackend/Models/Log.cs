@@ -13,11 +13,9 @@ namespace Kulinarka.Models
         [MaxLength(70)]
         public string Path { get; set; }
         [Required]
-        public TimeSpan Duration { get; set; }
-        [Required]
+        public double Duration { get; set; }
         [MaxLength(200)]
         public string UserAgent { get; set; }
-        [Required]
         [MaxLength(200)]
         public string Referer { get; set; }
 

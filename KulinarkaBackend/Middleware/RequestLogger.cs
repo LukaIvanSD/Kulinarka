@@ -28,7 +28,6 @@ namespace Kulinarka.Middleware
             DateTime startTime = DateTime.UtcNow;
             await next.Invoke(context);
             TimeSpan duration = DateTime.UtcNow - startTime;
-
             if (context.Response.StatusCode == 401)
                 return;
 
@@ -38,7 +37,6 @@ namespace Kulinarka.Middleware
             {
                 logs.Add(newLog);
                 currentBatchSize++;
-                Debug.WriteLine($"Added log. Current batch size: {currentBatchSize}");
             }
 
             if (currentBatchSize >= batchSize)
@@ -53,7 +51,7 @@ namespace Kulinarka.Middleware
             {
                 Method = context.Request.Method,
                 Path = context.Request.Path,
-                Duration = duration,
+                Duration = duration.TotalMilliseconds,
                 UserAgent = context.Request.Headers["User-Agent"],
                 Referer = context.Request.Headers["Referer"]
             };
