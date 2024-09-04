@@ -1,3 +1,8 @@
 # Kulinarka
 
-Mrzimo Hrvatsku (Koolinariku), pa eto :D
+Inspired by Coolinarika
+Members:
+Luka Ivanišević
+Milana Dobrić
+Jovan Crnčević
+Luka Vranješević
