@@ -2,6 +2,7 @@
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Kulinarka.SqlDbRepository
 {
@@ -69,7 +70,6 @@ namespace Kulinarka.SqlDbRepository
                 {
                     return Response<T>.Failure("Entity not found", StatusCode.NotFound);
                 }
-
                 _context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
                 await _context.SaveChangesAsync();
                 return Response<T>.Success(updatedEntity, StatusCode.OK);

@@ -3,6 +3,7 @@ using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Kulinarka.Services
@@ -29,11 +30,14 @@ namespace Kulinarka.Services
             return await recipeRepository.CreateAsync(recipe);
 
         }
-        public async Task<Response<Recipe>> UpdateRecipeAsync(User user,Recipe recipe)
+        public async Task<Response<Recipe>> UpdateRecipeAsync(User user,Recipe newRecipe)
         {
-            if (user.Id != recipe.UserId)
-                return Response<Recipe>.Failure("User is not the owner of the recipe",StatusCode.BadRequest);
-            return await recipeRepository.UpdateAsync(recipe.Id,recipe);
+            var recipeResult = await recipeRepository.GetByIdAsync(newRecipe.Id);
+            if (!recipeResult.IsSuccess)
+                return recipeResult;
+            if (user.Id != recipeResult.Data.UserId)
+                return Response<Recipe>.Failure("User is not the owner of the recipe", StatusCode.BadRequest);
+            return await recipeRepository.UpdateAsync(newRecipe.Id, newRecipe);
         }
         public async Task<Response<Recipe>> DeleteRecipeAsync(User user ,int recipeId)
         {

@@ -19,6 +19,9 @@ namespace Kulinarka.Models
                 .HasConversion(genderConverter);
             var difficultyConverter = new EnumToStringConverter<Difficulty>();
             modelBuilder.Entity<Recipe>().Property(recipe=>recipe.Difficulty).HasConversion(difficultyConverter);
+            modelBuilder.Entity<Recipe>()
+       .Property(r => r.Duration) 
+       .HasColumnType("time(7)");
             base.OnModelCreating(modelBuilder);
 
         }
