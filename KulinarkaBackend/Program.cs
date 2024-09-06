@@ -1,7 +1,9 @@
 using Kulinarka.Interfaces;
 using Kulinarka.Middleware;
 using Kulinarka.Models;
+using Kulinarka.RepositoryInterfaces;
 using Kulinarka.Services;
+using Kulinarka.SqlDbRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -35,11 +37,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<ICookieService, CookieService>();
-builder.Services.AddSingleton<ISessionService, SessionService>();
+builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddScoped<ILoginService,LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

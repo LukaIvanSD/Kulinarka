@@ -6,20 +6,24 @@ namespace Kulinarka.Services
     public class SessionService : ISessionService
     {
         public const string loginSession = "User";
-        public  void SetSession<T>(HttpContext httpContext, string key, T value)
+        private IHttpContextAccessor httpContextAccessor;
+        public SessionService(IHttpContextAccessor httpContextAccessor) {
+            this.httpContextAccessor = httpContextAccessor;
+        }
+        public  void SetSession<T>( string key, T value)
         {
             var jsonString = JsonConvert.SerializeObject(value);
-            httpContext.Session.SetString(key, jsonString);
+            httpContextAccessor.HttpContext.Session.SetString(key, jsonString);
         }
-        public  T GetSession<T>(HttpContext httpContext, string key)
+        public  T GetSession<T>( string key)
         {
-            var jsonString = httpContext.Session.GetString(key);
+            var jsonString = httpContextAccessor.HttpContext.Session.GetString(key);
             return jsonString != null ? JsonConvert.DeserializeObject<T>(jsonString) : default;
         }
 
-        public  void RemoveSession(HttpContext httpContext, string key)
+        public  void RemoveSession( string key)
         {
-            httpContext.Session.Remove(key);
+            httpContextAccessor.HttpContext.Session.Remove(key);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Kulinarka.Interfaces;
 using Kulinarka.Models;
+using Kulinarka.Models.Responses;
+using Kulinarka.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -7,68 +9,62 @@ namespace Kulinarka.Services
 {
     public class LoginService: ILoginService
     {
-        private readonly AppDbContext dbContext;
-        private readonly HttpContext context;
         private readonly ICookieService cookieService;
         private readonly ISessionService sessionService;
-        public LoginService(AppDbContext dbContext,IHttpContextAccessor httpContextAccessor,ICookieService cookieService,ISessionService sessionService)
+        private readonly IUserRepository userRepository;
+        public LoginService(ICookieService cookieService,ISessionService sessionService,IUserRepository userRepository,IUserService userService)
         {
-            this.dbContext = dbContext;
-            this.context = httpContextAccessor.HttpContext;
             this.cookieService = cookieService;
             this.sessionService = sessionService;
+            this.userRepository = userRepository;
 
         }
-        public async Task<User> LogInAsync(string username, string password,bool rememberMe)
+        public async Task<Response<User>> LogInAsync(string username, string password,bool rememberMe)
         {
-            User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
-            if (user == null)
-                return null;
-            SetUserSession(user);
+            var result = await userRepository.GetByUsernameAsync(username);
+            if (!result.IsSuccess || result.Data.Password!=password)
+                return Response<User>.Failure("Incorrect username or password",StatusCode.Unauthorized);
+            SetUserSession(result.Data);
             if (rememberMe)
-                SetLoginCookie(user.Username);
-            return user;
+                SetLoginCookie(result.Data.Username);
+            return Response<User>.Success(result.Data,StatusCode.OK);
         }
-        public async Task<bool>LogOutAsync()
+        public async Task<Response<User>>LogOutAsync()
         {
-            if (!await IsLoggedInAsync())
-                return false;
-            sessionService.RemoveSession(context, SessionService.loginSession);
-            cookieService.RemoveCookie(context, CookieService._loginCookie);
-            return true;
+            var result = await GetSessionAsync();
+            if (!result.IsSuccess)
+                return result;
+            sessionService.RemoveSession( SessionService.loginSession);
+            cookieService.RemoveCookie( CookieService._loginCookie);
+            return result;
         }
         private void SetUserSession(User user)
         {
-            sessionService.SetSession<User>(context, SessionService.loginSession, user);
+            sessionService.SetSession<User>(SessionService.loginSession, user);
         }
 
         private void SetLoginCookie(string username)
         {
-            cookieService.SetCookie(context, CookieService._loginCookie, username);
+            cookieService.SetCookie( CookieService._loginCookie, username);
         }
-        public async Task<bool> IsLoggedInAsync()
+        public async Task<Response<User>> GetSessionAsync()
         {
-            string cookie = cookieService.GetCookie(context, CookieService._loginCookie);
-            User user= sessionService.GetSession<User>(context, SessionService.loginSession);
+            string cookie = cookieService.GetCookie( CookieService._loginCookie);
+            User user= sessionService.GetSession<User>( SessionService.loginSession);
             if (user == null && cookie == null)
-                return false;
-            if (user == null)
-                await LogInWithCookieAsync(cookie);
-            return true;
+                return Response<User>.Failure("Not logged in",StatusCode.Unauthorized);
+            if (user != null)
+                return Response<User>.Success(user, StatusCode.OK);
+            return await LogInWithCookieAsync(cookie);
+  
         }
-        public async Task LogInWithCookieAsync(string username)
+        public async Task<Response<User>> LogInWithCookieAsync(string username)
         {
-            User user = await dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
-            if (user == null)
-            {
-                throw new Exception("User not found");
-            }
-            sessionService.SetSession<User>(context, SessionService.loginSession,user);
-        }
-        public async Task<User> GetSessionAsync()
-        {
-            await IsLoggedInAsync();
-            return sessionService.GetSession<User>(context, SessionService.loginSession);
+            var result = await userRepository.GetByUsernameAsync(username);
+            if (!result.IsSuccess)
+                return result;
+            SetUserSession(result.Data);
+            return Response<User>.Success(result.Data, StatusCode.OK);
         }
 
     }

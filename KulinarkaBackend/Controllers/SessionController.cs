@@ -7,7 +7,7 @@ namespace Kulinarka.Controllers
 {
     [ApiController]
     [Route("/[controller]")]
-    public class SessionController:ControllerBase
+    public class SessionController:BaseController
     {
         private readonly ILoginService loginService;
         public SessionController(ILoginService loginService)
@@ -17,29 +17,23 @@ namespace Kulinarka.Controllers
         [HttpPost]
         public async Task<IActionResult> LogIn([FromBody] LoginRequest loginRequest)
         {
-            if (!ModelState.IsValid )
-                return BadRequest();
-            if(await loginService.IsLoggedInAsync())
-                return Ok("Already logged in");
-
-            if (await loginService.LogInAsync(loginRequest.Username, loginRequest.Password, loginRequest.RememberMe) == null)
-                return Unauthorized();
-            return Ok("Login successfull");
+            var loginResult = await loginService.GetSessionAsync();
+            if (loginResult.IsSuccess)
+                return BadRequest("Already loggedIn");
+            var result = await loginService.LogInAsync(loginRequest.Username, loginRequest.Password, loginRequest.RememberMe);
+            return HandleResponse(result);
         }
         [HttpDelete]
         public async Task<IActionResult> LogOut()
         {
-            if(!await loginService.LogOutAsync())
-                return Ok("Already logged out");
-            return Ok("Logged out");
+            var result = await loginService.LogOutAsync();
+            return HandleResponse(result);
         }
         [HttpGet]
         public async Task<IActionResult>GetSession()
         {
-            User user = await loginService.GetSessionAsync();
-            if (user == null)
-                return NotFound("Not logged in");
-            return Ok(user);
+            var result = await loginService.GetSessionAsync();
+            return HandleResponse(result);
         }
     }
 }
