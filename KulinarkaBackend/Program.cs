@@ -1,6 +1,7 @@
 using Kulinarka.Interfaces;
 using Kulinarka.Middleware;
 using Kulinarka.Models;
+using Kulinarka.Profiles;
 using Kulinarka.RepositoryInterfaces;
 using Kulinarka.ServiceInterfaces;
 using Kulinarka.Services;
@@ -30,6 +31,10 @@ builder.Services.AddSession(option => {
     option.IOTimeout = TimeSpan.FromSeconds(20);
 });
 
+//Add automappers
+builder.Services.AddAutoMapper(typeof(UserAchievementProfile));
+
+
 // Add services to the container.
 builder.Configuration.AddJsonFile("configDb.json", optional: false, reloadOnChange: true);
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -47,6 +52,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
 builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
 builder.Services.AddScoped<IAchievementService, AchievementService>();
+builder.Services.AddScoped<IUserAchievementRepository, UserAchievementRepository>();
+builder.Services.AddScoped<IUserAchievementService, UserAchievementService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
