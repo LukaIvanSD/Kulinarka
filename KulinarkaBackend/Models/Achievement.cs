@@ -18,7 +18,7 @@ namespace Kulinarka.Models
         public int PointsNeeded { get; set; }
         public byte[]? Icon { get; set; }
         public RequirementType RequirementType { get; set; }
-        [JsonIgnore(Condition =JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore]
         public virtual ICollection<UserAchievement>? UserAchievements { get; set; }
     }
 }

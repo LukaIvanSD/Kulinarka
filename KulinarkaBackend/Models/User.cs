@@ -49,7 +49,7 @@ namespace Kulinarka.Models
         public string? Bio { get; set; }
 
         public byte[]? Picture { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore]
         public virtual ICollection<UserAchievement> UserAchievements { get; set; }
     }
 }

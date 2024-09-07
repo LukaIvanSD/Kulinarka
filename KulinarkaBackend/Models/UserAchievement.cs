@@ -6,10 +6,10 @@ namespace Kulinarka.Models
     {
 
         public int UserId { get; set; }
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore]
         public virtual User? User { get; set; }
         public int AchievementId { get; set; }
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore]
         public virtual Achievement? Achievement { get; set; }
         public DateTime? AquiredDate { get; set; }
         public int PointsCollected { get; set; }
@@ -20,5 +20,9 @@ namespace Kulinarka.Models
             UserId = userId;
             PointsCollected = 0;
         }
+        public UserAchievement()
+        {
+        }
+
     }
 }

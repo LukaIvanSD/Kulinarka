@@ -1,4 +1,5 @@
-﻿using Kulinarka.Interfaces;
+﻿using Kulinarka.DTO;
+using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
@@ -12,8 +13,10 @@ namespace Kulinarka.Services
     {
         private readonly IAchievementRepository achievementRepository;
         private readonly IUserService userService;
-        public AchievementService(IAchievementRepository achievementRepository, IUserService userService)
+        private readonly IUserAchievementService userAchievementService;
+        public AchievementService(IAchievementRepository achievementRepository, IUserService userService,IUserAchievementService userAchievementService)
         {
+            this.userAchievementService = userAchievementService;
             this.userService = userService;
             this.achievementRepository = achievementRepository;
         }
@@ -75,6 +78,11 @@ namespace Kulinarka.Services
                 achievement.UserAchievements.Add(usersAchievement);
             }
             return Response<Achievement>.Success(achievement,StatusCode.OK);
+        }
+
+        public async Task<Response<List<UserAchievement>>> GetUserAchievementsAsync(User user)
+        {
+            return await userAchievementService.GetUserAchievementsEagerAsync(user.Id);
         }
     }
 }
