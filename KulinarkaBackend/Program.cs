@@ -2,10 +2,10 @@ using Kulinarka.Interfaces;
 using Kulinarka.Middleware;
 using Kulinarka.Models;
 using Kulinarka.RepositoryInterfaces;
+using Kulinarka.ServiceInterfaces;
 using Kulinarka.Services;
 using Kulinarka.SqlDbRepository;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,12 +45,16 @@ builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
+builder.Services.AddScoped<IAchievementService, AchievementService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
+builder.Services.AddDbContext<AppDbContext>(options => {
+options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection"));
+
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
