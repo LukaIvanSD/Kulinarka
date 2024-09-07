@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json.Converters;
 
 namespace Kulinarka.Models
 {
@@ -49,5 +49,7 @@ namespace Kulinarka.Models
         public string? Bio { get; set; }
 
         public byte[]? Picture { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        public virtual ICollection<UserAchievement> UserAchievements { get; set; }
     }
 }
