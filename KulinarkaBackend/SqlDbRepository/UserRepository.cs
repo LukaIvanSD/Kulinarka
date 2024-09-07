@@ -15,24 +15,24 @@ namespace Kulinarka.SqlDbRepository
             dbSet = dbContext.Users;
         }
 
-        public Task<Response<User>> CreateAsync(User user)
+        public async Task<Response<User>> CreateAsync(User user, bool saveChanges = true)
         {
-            return repository.CreateAsync(user);
+            return await repository.CreateAsync(user,saveChanges);
         }
 
-        public Task<Response<User>> DeleteAsync(int id)
+        public async Task<Response<User>> DeleteAsync(int id, bool saveChanges = true)
         {
-            return repository.DeleteAsync(id);
+            return await repository.DeleteAsync(id,saveChanges);
         }
 
-        public Task<Response<List<User>>> GetAllAsync()
+        public async Task<Response<List<User>>> GetAllAsync()
         {
-            return repository.GetAllAsync();
+            return await repository.GetAllAsync();
         }
 
-        public Task<Response<User>> GetByIdAsync(int id)
+        public async Task<Response<User>> GetByIdAsync(int id)
         {
-            return repository.GetByIdAsync(id);
+            return await repository.GetByIdAsync(id);
         }
 
         public async Task<Response<User>> GetByUsernameAsync(string username)
@@ -50,14 +50,33 @@ namespace Kulinarka.SqlDbRepository
             }
         }
 
-        public Task<Response<User>> UpdateAsync(int id, User user)
+        public async Task<Response<User>> UpdateAsync(int id, User user, bool saveChanges = true)
         {
-            return repository.UpdateAsync(id, user);
+            return await repository.UpdateAsync(id, user);
         }
         public async Task<bool> IsUserUnique(User user)
         {
             return !await dbSet.AnyAsync(u => u.Username == user.Username || u.Email == user.Email);
         }
 
+        public Task<Response<User>> BeginTransactionAsync()
+        {
+            return repository.BeginTransactionAsync();
+        }
+
+        public Task<Response<User>> CommitTransactionAsync()
+        {
+            return repository.CommitTransactionAsync();
+        }
+
+        public Task<Response<User>> RollbackTransactionAsync()
+        {
+            return repository.RollbackTransactionAsync();
+        }
+
+        public Task<Response<User>> SaveChangesAsync()
+        {
+            return repository.SaveChangesAsync();
+        }
     }
 }
