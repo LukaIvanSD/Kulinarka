@@ -33,7 +33,7 @@ namespace WebApplication1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _userService.GetUserAsync(id);
+            var result = await _userService.GetUserByIdAsync(id);
             return HandleResponse(result);
         }
         // POST api/users

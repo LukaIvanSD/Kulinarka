@@ -49,7 +49,39 @@ namespace Kulinarka.Models
         public string? Bio { get; set; }
 
         public byte[]? Picture { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore]
         public virtual ICollection<UserAchievement> UserAchievements { get; set; }
+        [JsonIgnore]
+        public virtual UserTitle UserTitle { get; set; }
+
+        public int AddPoint(RequirementType requirementType)
+        {
+            int achievementsJustCompleted = 0;
+            foreach (UserAchievement userAchievement in UserAchievements)
+            {
+                if (userAchievement.Achievement.RequirementType == requirementType)
+                { 
+                    userAchievement.AddPoint();
+                    if (userAchievement.IsJustCompleted())
+                        achievementsJustCompleted++;
+                }
+            }
+            return achievementsJustCompleted;
+        }
+
+        internal int RemovePoint(RequirementType requirementType)
+        {
+            int achievementsJustRevoked = 0;
+            foreach (UserAchievement userAchievement in UserAchievements)
+            {
+                if (userAchievement.Achievement.RequirementType == requirementType)
+                {
+                    if(userAchievement.RemovePoint())
+                        if (userAchievement.IsRevoked())
+                            achievementsJustRevoked++;
+                }
+            }
+            return achievementsJustRevoked;
+        }
     }
 }

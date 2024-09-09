@@ -1,4 +1,6 @@
-﻿using Kulinarka.DTO;
+﻿using AutoMapper;
+using Kulinarka.DTO;
+using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.ServiceInterfaces;
@@ -14,8 +16,12 @@ namespace Kulinarka.Controllers
     public class AchievementsController : BaseController
     {
         private readonly IAchievementService achievementService;
-        public AchievementsController(IAchievementService achievementService) { 
+        private readonly ILoginService loginService;
+        private readonly IMapper mapper;
+        public AchievementsController(IAchievementService achievementService, ILoginService loginService,IMapper mapper) { 
         this.achievementService = achievementService;
+            this.loginService = loginService;
+            this.mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetAchievements()
@@ -48,6 +54,17 @@ namespace Kulinarka.Controllers
         {
             var result = await achievementService.DeleteAchievementAsync(id);
             return HandleResponse(result);
+        }
+        [HttpGet("/user")]
+        public async Task<IActionResult> GetUserAchievements()
+        {
+            var loginResult =await loginService.GetSessionAsync();
+            if (!loginResult.IsSuccess)
+                return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
+            var result = await achievementService.GetUserAchievementsAsync(loginResult.Data);
+            if (!result.IsSuccess)
+                return StatusCode((int)result.StatusCode, result.ErrorMessage);
+            return Ok(mapper.Map<List<UserAchievementDTO>>(result.Data));
         }
 
     }

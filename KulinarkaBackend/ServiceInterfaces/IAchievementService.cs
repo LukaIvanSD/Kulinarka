@@ -1,4 +1,5 @@
-﻿using Kulinarka.Models;
+﻿using Kulinarka.DTO;
+using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 
 namespace Kulinarka.ServiceInterfaces
@@ -11,5 +12,6 @@ namespace Kulinarka.ServiceInterfaces
         Task<Response<Achievement>> GetAchievementAsync(int id);
         Task<Response<Achievement>> UpdateAchievementAsync(Achievement achievement, bool saveChanges = true);
         Task<Response<Achievement>> CreateAchievement(Achievement achievement);
+        Task<Response<List<UserAchievement>>> GetUserAchievementsAsync(User user);
     }
 }

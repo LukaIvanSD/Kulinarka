@@ -18,7 +18,7 @@ namespace Kulinarka.Services
         {
             return await userRepository.DeleteAsync(id);
         }
-        public async Task<Response<User>> GetUserAsync(int id)
+        public async Task<Response<User>> GetUserByIdAsync(int id)
         {
             return await userRepository.GetByIdAsync(id);
         }
@@ -44,6 +44,10 @@ namespace Kulinarka.Services
                 return Response<User>.Failure("Username or email already exists", StatusCode.BadRequest);
                 user.DateOfCreation = DateTime.Now;
                 return await userRepository.CreateAsync(user);
+        }
+        public async Task<Response<User>> GetUserAchievementsEagerAsync(int id)
+        {
+            return await userRepository.GetUserAchievementsEagerAsync(id);
         }
     }
 }
