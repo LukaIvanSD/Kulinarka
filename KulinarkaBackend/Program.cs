@@ -54,6 +54,10 @@ builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
 builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<IUserAchievementRepository, UserAchievementRepository>();
 builder.Services.AddScoped<IUserAchievementService, UserAchievementService>();
+builder.Services.AddScoped<IUserTitleRepository, UserTitleRepository>();
+builder.Services.AddScoped<IUserTitleService, UserTitleService>();
+builder.Services.AddScoped<ITitleService, TitleService>();
+builder.Services.AddScoped<ITitleRepository, TitleRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
