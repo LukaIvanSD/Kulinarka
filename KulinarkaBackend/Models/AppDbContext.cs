@@ -11,6 +11,7 @@ namespace Kulinarka.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Log> Logs { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var genderConverter = new EnumToStringConverter<Gender>();
@@ -22,6 +23,23 @@ namespace Kulinarka.Models
             modelBuilder.Entity<Recipe>()
        .Property(r => r.Duration) 
        .HasColumnType("time(7)");
+            modelBuilder.Entity<UserAchievement>()
+            .HasKey(ua => new { ua.UserId, ua.AchievementId });
+            var requirementTypeConverter = new EnumToStringConverter<RequirementType>();
+            modelBuilder.Entity<Achievement>()
+                .Property(a => a.RequirementType)
+                .HasConversion(requirementTypeConverter);
+
+            modelBuilder.Entity<UserAchievement>()
+         .HasOne(ua => ua.User)
+         .WithMany(u => u.UserAchievements)
+         .HasForeignKey(ua => ua.UserId);
+
+            modelBuilder.Entity<UserAchievement>()
+                .HasOne(ua => ua.Achievement)
+                .WithMany(a => a.UserAchievements)
+                .HasForeignKey(ua => ua.AchievementId);
+
             base.OnModelCreating(modelBuilder);
 
         }

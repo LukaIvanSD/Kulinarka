@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Kulinarka.Models
 {
@@ -35,7 +37,8 @@ namespace Kulinarka.Models
         public int NumberOfPeople { get; set; }
         public string? ChefsAdvice { get; set; }
         public DateTime CreationDate { get; set; }
-        public User? User { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public virtual User? User { get; set; }
 
 
     }

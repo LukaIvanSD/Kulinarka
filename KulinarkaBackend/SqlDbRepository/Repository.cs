@@ -2,6 +2,7 @@
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
 
 namespace Kulinarka.SqlDbRepository
@@ -10,6 +11,7 @@ namespace Kulinarka.SqlDbRepository
     {
         private readonly AppDbContext _context;
         private readonly DbSet<T> _dbSet;
+        private IDbContextTransaction _transaction;
 
         public Repository(AppDbContext context)
         {
@@ -47,12 +49,13 @@ namespace Kulinarka.SqlDbRepository
             }
         }
 
-        public async Task<Response<T>> CreateAsync(T entity)
+        public async Task<Response<T>> CreateAsync(T entity,bool saveChanges=true)
         {
             try
             {
                 _dbSet.Add(entity);
-                await _context.SaveChangesAsync();
+                if (saveChanges)
+                    await _context.SaveChangesAsync();
                 return Response<T>.Success(entity, StatusCode.Created);
             }
             catch (Exception ex)
@@ -61,7 +64,7 @@ namespace Kulinarka.SqlDbRepository
             }
         }
 
-        public async Task<Response<T>> UpdateAsync(int id, T updatedEntity)
+        public async Task<Response<T>> UpdateAsync(int id, T updatedEntity,bool saveChanges=true)
         {
             try
             {
@@ -71,7 +74,8 @@ namespace Kulinarka.SqlDbRepository
                     return Response<T>.Failure("Entity not found", StatusCode.NotFound);
                 }
                 _context.Entry(existingEntity).CurrentValues.SetValues(updatedEntity);
-                await _context.SaveChangesAsync();
+                if (saveChanges)
+                    await _context.SaveChangesAsync();
                 return Response<T>.Success(updatedEntity, StatusCode.OK);
             }
             catch (DbUpdateException ex)
@@ -84,7 +88,7 @@ namespace Kulinarka.SqlDbRepository
             }
         }
 
-        public async Task<Response<T>> DeleteAsync(int id)
+        public async Task<Response<T>> DeleteAsync(int id,bool saveChanges=true)
         {
             try
             {
@@ -95,12 +99,87 @@ namespace Kulinarka.SqlDbRepository
                 }
 
                 _dbSet.Remove(entity);
-                await _context.SaveChangesAsync();
+                if (saveChanges)
+                    await _context.SaveChangesAsync();
                 return Response<T>.Success(entity, StatusCode.OK);
             }
             catch (Exception ex)
             {
                 return Response<T>.Failure("Error deleting entity: " + ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Response<T>> BeginTransactionAsync()
+        {
+            try
+            {
+                _transaction = await _context.Database.BeginTransactionAsync();
+                return Response<T>.Success(null, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<T>.Failure("Error starting transaction: " + ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Response<T>> CommitTransactionAsync()
+        {
+            if (_transaction == null)
+                return Response<T>.Failure("No active transaction to commit.", StatusCode.BadRequest);
+            try
+            {
+                await _transaction.CommitAsync();
+                return Response<T>.Success(null, StatusCode.OK);
+
+            }
+            catch (OperationCanceledException ex)
+            {
+                return Response<T>.Failure("Transaction commit cancelled: " + ex.Message, StatusCode.InternalServerError);
+            }
+            catch (Exception ex)
+            {
+                return Response<T>.Failure("Error committing transaction: " + ex.Message, StatusCode.InternalServerError);
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
+        }
+
+        public async Task<Response<T>> RollbackTransactionAsync()
+        {
+            if (_transaction == null)
+                return Response<T>.Failure("No active transaction to rollback.", StatusCode.BadRequest);
+            try
+            {
+                await _transaction.RollbackAsync();
+                return Response<T>.Success(null, StatusCode.OK);
+            }
+            catch (OperationCanceledException ex)
+            {
+                return Response<T>.Failure("Transaction commit cancelled: " + ex.Message, StatusCode.InternalServerError);
+            }
+            catch (Exception ex)
+            {
+                return Response<T>.Failure("Error rolling back transaction: " + ex.Message, StatusCode.InternalServerError);
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
+        }
+        public async Task<Response<T>> SaveChangesAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Response<T>.Success(null, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<T>.Failure("Error saving changes: " + ex.Message, StatusCode.InternalServerError);
             }
         }
     }

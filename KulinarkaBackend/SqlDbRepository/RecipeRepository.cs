@@ -14,29 +14,49 @@ namespace Kulinarka.SqlDbRepository
             this.dbSet = context.Recipes;
             this.repository = repository;
         }
-        public Task<Response<Recipe>> CreateAsync(Recipe recipe)
+        public async Task<Response<Recipe>> CreateAsync(Recipe recipe, bool saveChanges = true)
         {
-            return repository.CreateAsync(recipe);
+            return await repository.CreateAsync(recipe,saveChanges);
         }
 
-        public Task<Response<Recipe>> DeleteAsync(int id)
+        public async Task<Response<Recipe>> DeleteAsync(int id, bool saveChanges = true)
         {
-            return repository.DeleteAsync(id);
+            return await repository.DeleteAsync(id,saveChanges);
         }
 
-        public Task<Response<List<Recipe>>> GetAllAsync()
+        public async Task<Response<List<Recipe>>> GetAllAsync()
         {
-            return repository.GetAllAsync();
+            return await repository.GetAllAsync();
         }
 
-        public Task<Response<Recipe>> GetByIdAsync(int id)
+        public async Task<Response<Recipe>> GetByIdAsync(int id)
         {
-            return repository.GetByIdAsync(id);
+            return await repository.GetByIdAsync(id);
         }
 
-        public Task<Response<Recipe>> UpdateAsync(int id, Recipe entity)
+        public async Task<Response<Recipe>> UpdateAsync(int id, Recipe entity, bool saveChanges = true)
         {
-            return repository.UpdateAsync(id, entity);
+            return await repository.UpdateAsync(id, entity,saveChanges);
+        }
+
+        public async Task<Response<Recipe>> SaveChangesAsync()
+        {
+            return await repository.SaveChangesAsync();
+        }
+
+        public Task<Response<Recipe>> BeginTransactionAsync()
+        {
+            return repository.BeginTransactionAsync();
+        }
+
+        public Task<Response<Recipe>> CommitTransactionAsync()
+        {
+            return repository.CommitTransactionAsync();
+        }
+
+        public Task<Response<Recipe>> RollbackTransactionAsync()
+        {
+            return repository.RollbackTransactionAsync();
         }
     }
 }
