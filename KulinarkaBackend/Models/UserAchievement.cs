@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Serialization;
 
 namespace Kulinarka.Models
 {
@@ -23,6 +24,46 @@ namespace Kulinarka.Models
         public UserAchievement()
         {
         }
+        public bool AddPoint()
+        {
+            if (AquiredDate != null)
+                return false;
+            PointsCollected++;
+            return true;
+        }
+        public bool IsCompleted()
+        {
+            return AquiredDate != null;
+        }
 
+        internal bool IsJustCompleted()
+        {
+            if (PointsCollected >= Achievement.PointsNeeded && AquiredDate==null)
+            {
+                AquiredDate = DateTime.Now;
+                return true;
+            }
+            return false;
+
+        }
+
+        internal bool RemovePoint()
+        {
+            if (PointsCollected == 0)
+                return false;
+            PointsCollected--;
+            return true;
+
+        }
+
+        internal bool IsRevoked()
+        {
+            if (PointsCollected < Achievement.PointsNeeded && AquiredDate != null)
+            {
+                AquiredDate = null;
+                return true;
+            }
+            return false;
+        }
     }
 }

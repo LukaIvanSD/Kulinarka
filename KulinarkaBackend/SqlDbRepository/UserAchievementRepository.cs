@@ -9,9 +9,10 @@ namespace Kulinarka.SqlDbRepository
     {
         private readonly IRepository<UserAchievement> repository;
         private readonly DbSet<UserAchievement> dbSet;
-        public UserAchievementRepository(AppDbContext dbContext,IRepository<UserAchievement> repository) {
+        public UserAchievementRepository(AppDbContext dbContext, IRepository<UserAchievement> repository)
+        {
             this.repository = repository;
-            dbSet = dbContext.Set<UserAchievement>();
+            dbSet = dbContext.UserAchievement;
         }
         public async Task<Response<UserAchievement>> BeginTransactionAsync()
         {
@@ -50,7 +51,7 @@ namespace Kulinarka.SqlDbRepository
 
         public async Task<Response<UserAchievement>> SaveChangesAsync()
         {
-           return await repository.SaveChangesAsync();
+            return await repository.SaveChangesAsync();
         }
 
         public async Task<Response<UserAchievement>> UpdateAsync(int id, UserAchievement entity, bool saveChanges = true)
@@ -62,11 +63,26 @@ namespace Kulinarka.SqlDbRepository
             try
             {
                 var userAchievements = await dbSet.Where(ua => ua.UserId == userId).Include(ua => ua.Achievement).ToListAsync();
-                return Response<List<UserAchievement>>.Success(userAchievements,StatusCode.OK);
+                return Response<List<UserAchievement>>.Success(userAchievements, StatusCode.OK);
             }
             catch (Exception ex)
             {
-                return  Response<List<UserAchievement>>.Failure(ex.Message,StatusCode.InternalServerError);
+                return Response<List<UserAchievement>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Response<UserAchievement>> UpdateUserAchievementAsync(UserAchievement userAchievement, bool saveChanges = true)
+        {
+            try
+            {
+                dbSet.Update(userAchievement);
+                if (saveChanges)
+                    await SaveChangesAsync();
+                return Response<UserAchievement>.Success(userAchievement, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<UserAchievement>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }
     }
