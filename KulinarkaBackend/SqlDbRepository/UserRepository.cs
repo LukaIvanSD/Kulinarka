@@ -59,24 +59,39 @@ namespace Kulinarka.SqlDbRepository
             return !await dbSet.AnyAsync(u => u.Username == user.Username || u.Email == user.Email);
         }
 
-        public Task<Response<User>> BeginTransactionAsync()
+        public async Task<Response<User>> BeginTransactionAsync()
         {
-            return repository.BeginTransactionAsync();
+            return await repository.BeginTransactionAsync();
         }
 
-        public Task<Response<User>> CommitTransactionAsync()
+        public async Task<Response<User>> CommitTransactionAsync()
         {
-            return repository.CommitTransactionAsync();
+            return await repository.CommitTransactionAsync();
         }
 
-        public Task<Response<User>> RollbackTransactionAsync()
+        public async Task<Response<User>> RollbackTransactionAsync()
         {
-            return repository.RollbackTransactionAsync();
+            return await repository.RollbackTransactionAsync();
         }
 
-        public Task<Response<User>> SaveChangesAsync()
+        public async Task<Response<User>> SaveChangesAsync()
         {
-            return repository.SaveChangesAsync();
+            return await repository.SaveChangesAsync();
+        }
+
+        public async Task<Response<User>> GetUserAchievementsEagerAsync(int id)
+        {
+            try
+            {
+                var user = await dbSet.Include(u => u.UserAchievements).ThenInclude(ua => ua.Achievement).FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null)
+                    return Response<User>.Failure("User not found", StatusCode.NotFound);
+                return Response<User>.Success(user, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<User>.Failure("Error fetching data: " + ex.Message, StatusCode.InternalServerError);
+            }
         }
     }
 }
