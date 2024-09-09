@@ -50,13 +50,17 @@ namespace Kulinarka.Services
             {
                 result = await AddAchievementAsync(achievement,false);
                 if (!result.IsSuccess)
-                    return result;
+                    throw new Exception(result.ErrorMessage);
                 result = await CreateUsersAchievement(result.Data);
+                if (!result.IsSuccess)
+                    throw new Exception(result.ErrorMessage);
                 result = await achievementRepository.SaveChangesAsync();
                 if (!result.IsSuccess)
-                    return result;
+                    throw new Exception(result.ErrorMessage);
                 result = await achievementRepository.CommitTransactionAsync();
-                return result;
+                if (!result.IsSuccess)
+                    throw new Exception(result.ErrorMessage);
+                return Response<Achievement>.Success(result.Data, StatusCode.OK);
             }
             catch (Exception ex)
             {
