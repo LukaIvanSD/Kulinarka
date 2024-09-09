@@ -1,4 +1,5 @@
 ﻿using Kulinarka.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kulinarka.RepositoryInterfaces
 {
