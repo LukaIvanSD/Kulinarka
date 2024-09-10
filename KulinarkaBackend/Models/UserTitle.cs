@@ -1,6 +1,6 @@
 ﻿
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,6 +19,14 @@ namespace Kulinarka.Models
         [NotMapped]
         public virtual Title NextTitle { get; set; }
         public DateTime AquiredDate { get; set; }
+
+        public UserTitle(int userId)
+        {
+            UserId = userId;
+            TitleId = 1;
+            AquiredDate = DateTime.Now;
+        }
+
 
         public bool HasEnoughAchievements(int achievements)
         {
