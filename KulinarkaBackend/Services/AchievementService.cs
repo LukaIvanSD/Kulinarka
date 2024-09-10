@@ -12,12 +12,10 @@ namespace Kulinarka.Services
     public class AchievementService : IAchievementService
     {
         private readonly IAchievementRepository achievementRepository;
-        private readonly IUserService userService;
-        private readonly IUserAchievementService userAchievementService;
-        public AchievementService(IAchievementRepository achievementRepository, IUserService userService,IUserAchievementService userAchievementService)
+        private readonly IUserAchievementService userAchievementServiceFactory;
+        public AchievementService(IAchievementRepository achievementRepository,IUserAchievementService userAchievementServiceFactory)
         {
-            this.userAchievementService = userAchievementService;
-            this.userService = userService;
+            this.userAchievementServiceFactory = userAchievementServiceFactory;
             this.achievementRepository = achievementRepository;
         }
         public async Task<Response<Achievement>> AddAchievementAsync(Achievement achievement,bool saveChanges=true)
@@ -43,6 +41,7 @@ namespace Kulinarka.Services
 
         public async Task<Response<Achievement>> CreateAchievement(Achievement achievement)
         {
+
             var result = await achievementRepository.BeginTransactionAsync();
             if (!result.IsSuccess)
                 return result;
@@ -51,7 +50,8 @@ namespace Kulinarka.Services
                 result = await AddAchievementAsync(achievement,false);
                 if (!result.IsSuccess)
                     throw new Exception(result.ErrorMessage);
-                result = await CreateUsersAchievement(result.Data);
+                //IUserAchievementService userAchievementService = userAchievementServiceFactory.Value;
+                result = await userAchievementServiceFactory.CreateUsersAchievement(result.Data);
                 if (!result.IsSuccess)
                     throw new Exception(result.ErrorMessage);
                 result = await achievementRepository.SaveChangesAsync();
@@ -70,23 +70,5 @@ namespace Kulinarka.Services
 
         }
 
-        private async Task<Response<Achievement>> CreateUsersAchievement(Achievement achievement)
-        {
-            var result = await userService.GetUsersAsync();
-            if (!result.IsSuccess)
-                return Response<Achievement>.Failure("Error fetching users", StatusCode.InternalServerError);
-            achievement.UserAchievements = new List<UserAchievement>();
-            foreach (User user in result.Data)
-            {
-                UserAchievement usersAchievement = new UserAchievement(achievement.Id,user.Id);
-                achievement.UserAchievements.Add(usersAchievement);
-            }
-            return Response<Achievement>.Success(achievement,StatusCode.OK);
-        }
-
-        public async Task<Response<List<UserAchievement>>> GetUserAchievementsAsync(User user)
-        {
-            return await userAchievementService.GetUserAchievementsEagerAsync(user.Id);
-        }
     }
 }
