@@ -11,17 +11,17 @@ namespace Kulinarka.Services
     {
         private readonly ICookieService cookieService;
         private readonly ISessionService sessionService;
-        private readonly IUserRepository userRepository;
-        public LoginService(ICookieService cookieService,ISessionService sessionService,IUserRepository userRepository,IUserService userService)
+        private readonly IUserService userService;
+        public LoginService(ICookieService cookieService,ISessionService sessionService,IUserService userService)
         {
             this.cookieService = cookieService;
             this.sessionService = sessionService;
-            this.userRepository = userRepository;
+            this.userService = userService;
 
         }
         public async Task<Response<User>> LogInAsync(string username, string password,bool rememberMe)
         {
-            var result = await userRepository.GetByUsernameAsync(username);
+            var result = await userService.GetByUsernameAsync(username);
             if (!result.IsSuccess || result.Data.Password!=password)
                 return Response<User>.Failure("Incorrect username or password",StatusCode.Unauthorized);
             SetUserSession(result.Data);
@@ -60,7 +60,7 @@ namespace Kulinarka.Services
         }
         public async Task<Response<User>> LogInWithCookieAsync(string username)
         {
-            var result = await userRepository.GetByUsernameAsync(username);
+            var result = await userService.GetByUsernameAsync(username);
             if (!result.IsSuccess)
                 return result;
             SetUserSession(result.Data);

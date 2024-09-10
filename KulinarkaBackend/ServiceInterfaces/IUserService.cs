@@ -11,6 +11,6 @@ namespace Kulinarka.Interfaces
         public Task<Response<User>> RegisterUserAsync(User user);
         public Task<Response<User>> GetUserByIdAsync(int id);
         public Task<Response<User>> GetUserAchievementsEagerAsync(int id);
-
+        Task<Response<User>> GetByUsernameAsync(string username);
     }
 }

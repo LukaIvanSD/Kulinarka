@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
+
 
 namespace Kulinarka.Models
 {
@@ -23,7 +25,7 @@ namespace Kulinarka.Models
         public string LastName { get; set; }
 
         [Required(ErrorMessage ="Gender is required")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
         public Gender Gender { get; set; }
 
         [Required(ErrorMessage ="Birthday is required")]
@@ -49,10 +51,12 @@ namespace Kulinarka.Models
         public string? Bio { get; set; }
 
         public byte[]? Picture { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<UserAchievement> UserAchievements { get; set; }
-        [JsonIgnore]
-        public virtual UserTitle UserTitle { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public virtual ICollection<UserAchievement>? UserAchievements { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public virtual UserTitle? UserTitle { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public virtual UserStatistic? UserStatistic { get; set; }
 
         public int AddPoint(RequirementType requirementType)
         {

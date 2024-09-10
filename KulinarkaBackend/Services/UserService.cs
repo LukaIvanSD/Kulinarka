@@ -2,6 +2,7 @@
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
+using Kulinarka.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
 using System.Diagnostics;
@@ -11,8 +12,12 @@ namespace Kulinarka.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
-        public UserService(IUserRepository userRepository) {
+        private readonly IUserAchievementService userAchievementServiceFactory;
+
+        public UserService(IUserRepository userRepository, IUserAchievementService userAchievementServiceFactory)
+        {
             this.userRepository = userRepository;
+            this.userAchievementServiceFactory = userAchievementServiceFactory;
         }
         public async Task<Response<User>> DeleteUserAsync(int id)
         {
@@ -42,12 +47,33 @@ namespace Kulinarka.Services
         {
             if (!await userRepository.IsUserUnique(user))
                 return Response<User>.Failure("Username or email already exists", StatusCode.BadRequest);
-                user.DateOfCreation = DateTime.Now;
-                return await userRepository.CreateAsync(user);
+            var result=await InitializeUserAsync(user);
+            if (!result.IsSuccess)
+                return result;
+            return await userRepository.CreateAsync(user);
         }
+
+        private async Task<Response<User>> InitializeUserAsync(User user)
+        {
+            user.DateOfCreation = DateTime.Now;
+            user.UserTitle= new UserTitle(user.Id);
+            user.UserStatistic = new UserStatistic(user.Id);
+           // IUserAchievementService userAchievementServiceInstance = userAchievementServiceFactory;
+            var result = await userAchievementServiceFactory.CreateUserAchievements(user);
+            if (!result.IsSuccess)
+                return Response<User>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
+            user.UserAchievements = result.Data;
+            return Response<User>.Success(user, StatusCode.OK);
+        }
+
         public async Task<Response<User>> GetUserAchievementsEagerAsync(int id)
         {
             return await userRepository.GetUserAchievementsEagerAsync(id);
+        }
+
+        public Task<Response<User>> GetByUsernameAsync(string username)
+        {
+            return userRepository.GetByUsernameAsync(username);
         }
     }
 }
