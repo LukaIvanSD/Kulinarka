@@ -17,6 +17,7 @@ namespace Kulinarka.Models
         public DbSet<UserTitle> UserTitle { get; set; }
         public DbSet<UserStatistic> UserStatistics { get; set; }
         public DbSet<PromotionReward> PromotionRewards { get; set; }
+        public DbSet<UserReward> UserRewards { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var genderConverter = new EnumToStringConverter<Gender>();
@@ -62,10 +63,13 @@ namespace Kulinarka.Models
                 .WithOne(u => u.UserStatistic)
                 .HasForeignKey<UserStatistic>(us => us.UserId);
             modelBuilder.Entity<PromotionReward>()
-                .HasOne(pr=>pr.Title)
-                .WithOne(t=>t.PromotionReward)
-                .HasForeignKey<PromotionReward>(pr => pr.TitleId)
-                .IsRequired(false);
+                .HasOne(pr => pr.Title)
+                .WithOne(t => t.PromotionReward)
+                .HasForeignKey<PromotionReward>(pr => pr.TitleId);
+            modelBuilder.Entity<UserReward>()
+                .HasOne(ur => ur.Recipe)
+                .WithMany(r => r.Promotions)
+                .HasForeignKey(ur => ur.RecipeId);
             base.OnModelCreating(modelBuilder);
 
         }

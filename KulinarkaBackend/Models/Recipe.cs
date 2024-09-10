@@ -39,6 +39,8 @@ namespace Kulinarka.Models
         public DateTime CreationDate { get; set; }
         [JsonIgnore]
         public virtual User? User { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<UserReward>? Promotions { get; set; }
 
 
     }

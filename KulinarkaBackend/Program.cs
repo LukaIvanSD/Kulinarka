@@ -60,8 +60,12 @@ builder.Services.AddScoped<ITitleService, TitleService>();
 builder.Services.AddScoped<ITitleRepository, TitleRepository>();
 builder.Services.AddScoped<IUserStatisticRepository, UserStatisticRepository>();
 builder.Services.AddScoped<IUserStatisticService, UserStatisticService>();
+builder.Services.AddScoped<IUserRewardRepository, UserRewardRepository>();
+builder.Services.AddScoped<IUserRewardService, UserRewardService>();
+builder.Services.AddScoped<IPromotionRewardRepository, PromotionRewardRepository>();
 builder.Services.AddScoped<Func<IAchievementService>>(provider => () => provider.GetService<IAchievementService>());
 builder.Services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>());
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
