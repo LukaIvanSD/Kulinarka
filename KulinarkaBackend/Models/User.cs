@@ -112,5 +112,22 @@ namespace Kulinarka.Models
             }
             return achievementsJustRevoked;
         }
+
+        internal List<PromotionRewardRecipe> GetActivePromotions()
+        {
+            List<PromotionRewardRecipe> activePromotions = new List<PromotionRewardRecipe>();
+            foreach (Recipe recipe in Recipes)
+            { 
+                PromotionRewardRecipe activePromotion= recipe.GetActivePromotion();
+                if (activePromotion!=null)
+                    activePromotions.Add(activePromotion);
+            }
+            return activePromotions;
+        }
+
+        internal bool IsPromoted()
+        {
+            return UserTitle.TitleId > UserTitle.CurrentTitle.Id;
+        }
     }
 }

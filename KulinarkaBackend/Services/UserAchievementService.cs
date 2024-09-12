@@ -34,8 +34,12 @@ namespace Kulinarka.Services
             if (!userResult.IsSuccess)
                 return Response<List<UserAchievement>>.Failure(userResult.ErrorMessage, StatusCode.InternalServerError);
             int achievementsjustCompleted=userResult.Data.AddPoint(requirementType);
-            if (achievementsjustCompleted != 0) 
-               await userTitleService.UpdateUserTitle(userResult.Data);
+            if (achievementsjustCompleted != 0)
+            {
+                var result = await userTitleService.UpdateUserTitle(userResult.Data);
+                if (!result.IsSuccess)
+                    return Response<List<UserAchievement>>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
+            }
             return  await SaveUserAchievementsToDb(userResult.Data.UserAchievements);
         }
 
@@ -77,7 +81,11 @@ namespace Kulinarka.Services
                 return Response<List<UserAchievement>>.Failure(userResult.ErrorMessage, StatusCode.InternalServerError);
             int achievementsJustRevoked = userResult.Data.RemovePoint(requirementType);
             if (achievementsJustRevoked != 0)
-                await userTitleService.UpdateUserTitle(userResult.Data);
+            {
+                var result = await userTitleService.UpdateUserTitle(userResult.Data);
+                if (!result.IsSuccess)
+                    return Response<List<UserAchievement>>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
+            }
             return await SaveUserAchievementsToDb(userResult.Data.UserAchievements);
         }
         public async Task<Response<Achievement>> CreateUsersAchievement(Achievement achievement)

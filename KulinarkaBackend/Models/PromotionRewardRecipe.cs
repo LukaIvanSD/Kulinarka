@@ -32,5 +32,13 @@ namespace Kulinarka.Models
         {
             return DateUsed.AddDays(PromotionReward.IntervalInDays)>=DateTime.UtcNow;
         }
+
+        internal bool UpdateReward(int promotionRewardId)
+        {
+            if (!IsActive())
+                return false;
+            PromotionRewardId = promotionRewardId;
+            return true;
+        }
     }
 }

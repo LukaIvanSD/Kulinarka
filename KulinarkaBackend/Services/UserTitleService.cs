@@ -9,10 +9,13 @@ namespace Kulinarka.Services
     public class UserTitleService : IUserTitleService
     {
         private readonly IUserTitleRepository userTitleRepository;
-        private readonly ITitleService titleService; 
-        public UserTitleService(IUserTitleRepository userTitleRepository,ITitleService titleService) {
+        private readonly ITitleService titleService;
+        private readonly IPromotionRewardRecipeService promotionRewardService;
+        public UserTitleService(IUserTitleRepository userTitleRepository,ITitleService titleService, IPromotionRewardRecipeService promotionRewardRecipeService) {
             this.titleService = titleService;
             this.userTitleRepository = userTitleRepository;
+            this.promotionRewardService = promotionRewardRecipeService;
+
         }
 
         public async Task<Response<UserTitle>> GetUserTitleEagerAsync(int userId)
@@ -33,6 +36,9 @@ namespace Kulinarka.Services
             user.UserTitle = userTitleResult.Data;
             if (!UpdateTitle(user).Result)
                 return Response<UserTitle>.Failure("Didnt update title", StatusCode.BadRequest);
+            var result = await promotionRewardService.UpdateUserPromotions(user);
+            if (!result.IsSuccess)
+                return Response<UserTitle>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
             return await SaveUserTitleToDb(user);
         }
 

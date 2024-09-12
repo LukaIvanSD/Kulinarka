@@ -44,6 +44,20 @@ namespace Kulinarka.SqlDbRepository
             return await repository.GetByIdAsync(id);
         }
 
+        public async Task<Response<PromotionReward>> GetByTitleId(int titleId)
+        {
+            try { 
+                PromotionReward promotionReward = await dbSet.FirstOrDefaultAsync(x => x.TitleId == titleId);
+                if (promotionReward == null)
+                    return Response<PromotionReward>.Failure("Promotion reward not found", StatusCode.NotFound);
+                return Response<PromotionReward>.Success(promotionReward,StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<PromotionReward>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
         public async Task<Response<PromotionReward>> RollbackTransactionAsync()
         {
             return await repository.RollbackTransactionAsync();
@@ -57,6 +71,11 @@ namespace Kulinarka.SqlDbRepository
         public async Task<Response<PromotionReward>> UpdateAsync(int id, PromotionReward entity, bool saveChanges = true)
         {
             return await repository.UpdateAsync(id, entity, saveChanges);
+        }
+
+        public Task<Response<PromotionReward>> UpdateAsync(PromotionReward entity, bool saveChanges = true)
+        {
+            throw new NotImplementedException();
         }
     }
 }
