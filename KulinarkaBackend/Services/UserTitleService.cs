@@ -19,6 +19,12 @@ namespace Kulinarka.Services
         {
             return await userTitleRepository.GetUserTitleEagerAsync(userId);
         }
+
+        public Task<Response<UserTitle>> GetUserTitleWithPromotionRewardEagerAsync(int userId)
+        {
+            return userTitleRepository.GetUserTitleWithPromotionRewardEagerAsync(userId);
+        }
+
         public async Task<Response<UserTitle>> UpdateUserTitle(User user)
         {
             var userTitleResult = await GetUserTitleEagerAsync(user.Id);

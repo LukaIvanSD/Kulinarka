@@ -8,7 +8,7 @@ namespace Kulinarka.SqlDbRepository
 {
     public class UserTitleRepository : IUserTitleRepository
     {
-        private  DbSet<UserTitle> dbSet;
+        private DbSet<UserTitle> dbSet;
         private readonly IRepository<UserTitle> repository;
         public UserTitleRepository(AppDbContext context, IRepository<UserTitle> repository)
         {
@@ -74,7 +74,8 @@ namespace Kulinarka.SqlDbRepository
                 return Response<UserTitle>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }
-        public async Task<Response<UserTitle>> UpdateAsync(UserTitle userTitle) {
+        public async Task<Response<UserTitle>> UpdateAsync(UserTitle userTitle)
+        {
             try
             {
                 dbSet.Update(userTitle);
@@ -82,7 +83,24 @@ namespace Kulinarka.SqlDbRepository
                 if (!result.IsSuccess)
                     return Response<UserTitle>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
                 return Response<UserTitle>.Success(userTitle, StatusCode.OK);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
+                return Response<UserTitle>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Response<UserTitle>> GetUserTitleWithPromotionRewardEagerAsync(int userId)
+        {
+            try
+            {
+                UserTitle userTitle = await dbSet.Include(ut => ut.CurrentTitle).ThenInclude(t => t.PromotionReward).FirstOrDefaultAsync(ut => ut.UserId == userId);
+                if (userTitle == null)
+                    return Response<UserTitle>.Failure("User title not found", StatusCode.NotFound);
+                return Response<UserTitle>.Success(userTitle, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
                 return Response<UserTitle>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }

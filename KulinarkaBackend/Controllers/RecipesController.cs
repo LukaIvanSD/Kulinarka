@@ -3,6 +3,8 @@ using Kulinarka.Models;
 using Kulinarka.Services;
 using Microsoft.AspNetCore.Mvc;
 using Kulinarka.Models.Responses;
+using AutoMapper;
+using Kulinarka.DTO;
 
 namespace Kulinarka.Controllers
 {
@@ -13,8 +15,10 @@ namespace Kulinarka.Controllers
         private readonly IRecipeService recipeService;
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
-        public RecipesController(IRecipeService recipeService,ILoginService loginService,ISessionService sessionService)
+        private readonly IMapper mapper;
+        public RecipesController(IRecipeService recipeService,ILoginService loginService,ISessionService sessionService,IMapper mapper)
         {
+            this.mapper = mapper;
             this.recipeService = recipeService;
             this.loginService = loginService;
             this.sessionService = sessionService;
@@ -22,13 +26,13 @@ namespace Kulinarka.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRecipes()
         {
-            var result = await recipeService.GetRecipesAsync();
+            var result = await recipeService.GetAllAsync();
             return HandleResponse(result);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRecipe(int id)
         {
-            var result= await recipeService.GetRecipeAsync(id);
+            var result= await recipeService.GetByIdAsync(id);
             return HandleResponse(result);
         }
         [HttpPost]
@@ -37,7 +41,7 @@ namespace Kulinarka.Controllers
             var loginResult = await loginService.GetSessionAsync();
             if (!loginResult.IsSuccess)
                 return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
-            var result = await recipeService.AddRecipeAsync(loginResult.Data, recipe);
+            var result = await recipeService.AddAsync(loginResult.Data, recipe);
             return HandleResponse(result);
         }
         [HttpPut("{id}")]
@@ -48,7 +52,7 @@ namespace Kulinarka.Controllers
             var loginResult = await loginService.GetSessionAsync();
             if (!loginResult.IsSuccess)
                 return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
-            var result = await recipeService.UpdateRecipeAsync(loginResult.Data, recipe);
+            var result = await recipeService.UpdateAsync(loginResult.Data, recipe);
             return HandleResponse(result);
         }
         [HttpDelete("{id}")]
@@ -57,9 +61,25 @@ namespace Kulinarka.Controllers
             var loginResult = await loginService.GetSessionAsync();
             if (!loginResult.IsSuccess)
                 return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
-            var result = await recipeService.DeleteRecipeAsync(loginResult.Data, id);
+            var result = await recipeService.DeleteAsync(loginResult.Data, id);
             return HandleResponse(result);
         }
+        [HttpGet("sorted")]
+        public async Task<IActionResult> GetAllSorted() 
+        {
+            var result = await recipeService.GetSortedAsync();
+            return HandleResponse(result);
+        }
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserRecipes()
+        {
+            var loginResult = await loginService.GetSessionAsync();
+            if (!loginResult.IsSuccess)
+                return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
+            var result = await recipeService.GetUserRecipesAsync(loginResult.Data);
+            return HandleResponse(result);
+        }
+
 
     }
 }

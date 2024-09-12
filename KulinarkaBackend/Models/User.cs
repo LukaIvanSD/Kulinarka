@@ -56,6 +56,7 @@ namespace Kulinarka.Models
         public virtual UserTitle? UserTitle { get; set; }
         [JsonIgnore]
         public virtual UserStatistic? UserStatistic { get; set; }
+        public virtual ICollection<Recipe>? Recipes { get; set; }
 
         public int AddPoint(RequirementType requirementType)
         {
@@ -70,6 +71,31 @@ namespace Kulinarka.Models
                 }
             }
             return achievementsJustCompleted;
+        }
+
+        internal bool CanPromote(int recipeId)
+        {
+            if(IsPromotionActive(recipeId))
+                return false;
+            if (UserTitle.CurrentTitle.PromotionReward.PostsToPromote > PromotionsInInterval())
+                return true;
+            return false;
+        }
+
+        private bool IsPromotionActive(int recipeId)
+        {
+            return Recipes.Where(r => r.Id == recipeId).FirstOrDefault().IsPromoted();
+        }
+
+        private int PromotionsInInterval()
+        {
+            int promotionsInInterval = 0;
+            foreach (Recipe recipe in Recipes)
+            {
+                if (recipe.WasPromotedInInterval())
+                    promotionsInInterval++;
+            }
+            return promotionsInInterval;
         }
 
         internal int RemovePoint(RequirementType requirementType)
