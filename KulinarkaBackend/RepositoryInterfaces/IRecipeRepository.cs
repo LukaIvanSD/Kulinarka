@@ -10,5 +10,7 @@ namespace Kulinarka.RepositoryInterfaces
         Task<Response<Recipe>> CreateAsync(Recipe recipe, bool saveChanges = true);
         Task<Response<Recipe>> UpdateAsync(int id, Recipe recipe, bool saveChanges = true);
         Task<Response<Recipe>> DeleteAsync(int id, bool saveChanges = true);
+        Task<Response<List<Recipe>>> GetRecipesAndPromotionsEagerAsync();
+        Task<Response<List<Recipe>>> GetUserRecipesWithPromotionsEagerAsync(int userId);
     }
 }

@@ -17,7 +17,9 @@ namespace Kulinarka.Models
         public TitleType TitleType { get; set; }
         public int AchievementsRequired { get; set; }
         [JsonIgnore]
-        public virtual ICollection<UserTitle> UserTitles { get; set; }
+        public virtual ICollection<UserTitle>? UserTitles { get; set; }
+        [JsonIgnore]
+        public virtual PromotionReward? PromotionReward { get; set; }
 
         internal static int GetNextTitleId(int currentTitleId)
         {

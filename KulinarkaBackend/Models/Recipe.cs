@@ -39,7 +39,36 @@ namespace Kulinarka.Models
         public DateTime CreationDate { get; set; }
         [JsonIgnore]
         public virtual User? User { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<PromotionRewardRecipe>? Promotions { get; set; }
 
+        internal DateTime? DatePromoted()
+        {
+            if (Promotions == null)
+                return null;
+            foreach (PromotionRewardRecipe userReward in Promotions)
+                if (userReward.IsActive())
+                    return userReward.DateUsed;
+            return null;
+        }
 
+        internal bool IsPromoted()
+        {
+            if (Promotions == null)
+                return false;
+            foreach (PromotionRewardRecipe userReward in Promotions)
+                if (userReward.IsActive())
+                    return true;
+            return false;
+        }
+        internal bool WasPromotedInInterval()
+        {
+            if (Promotions == null)
+                return false;
+            foreach (PromotionRewardRecipe promotionRewardRecipe in Promotions)
+                if (promotionRewardRecipe.IsInInterval())
+                    return true;
+            return false;
+        }
     }
 }

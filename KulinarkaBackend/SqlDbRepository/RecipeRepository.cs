@@ -58,5 +58,31 @@ namespace Kulinarka.SqlDbRepository
         {
             return repository.RollbackTransactionAsync();
         }
+
+        public async Task<Response<List<Recipe>>> GetRecipesAndPromotionsEagerAsync()
+        {
+            try 
+            { 
+                List<Recipe>recipes= await dbSet.Include(r=>r.Promotions).ThenInclude(prr=>prr.PromotionReward).ToListAsync();
+                return Response<List<Recipe>>.Success(recipes,StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<List<Recipe>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public  async Task<Response<List<Recipe>>> GetUserRecipesWithPromotionsEagerAsync(int userId)
+        {
+            try
+            {
+                List<Recipe> recipes = await dbSet.Where(u=>u.UserId==userId).Include(r => r.Promotions).ThenInclude(prr => prr.PromotionReward).ToListAsync();
+                return Response<List<Recipe>>.Success(recipes, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<List<Recipe>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
     }
 }

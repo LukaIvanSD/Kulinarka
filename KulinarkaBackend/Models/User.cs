@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;
 
 
@@ -51,12 +50,13 @@ namespace Kulinarka.Models
         public string? Bio { get; set; }
 
         public byte[]? Picture { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public virtual ICollection<UserAchievement>? UserAchievements { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public virtual UserTitle? UserTitle { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
+        [JsonIgnore]
         public virtual UserStatistic? UserStatistic { get; set; }
+        public virtual ICollection<Recipe>? Recipes { get; set; }
 
         public int AddPoint(RequirementType requirementType)
         {
@@ -71,6 +71,31 @@ namespace Kulinarka.Models
                 }
             }
             return achievementsJustCompleted;
+        }
+
+        internal bool CanPromote(int recipeId)
+        {
+            if(IsPromotionActive(recipeId))
+                return false;
+            if (UserTitle.CurrentTitle.PromotionReward.PostsToPromote > PromotionsInInterval())
+                return true;
+            return false;
+        }
+
+        private bool IsPromotionActive(int recipeId)
+        {
+            return Recipes.Where(r => r.Id == recipeId).FirstOrDefault().IsPromoted();
+        }
+
+        private int PromotionsInInterval()
+        {
+            int promotionsInInterval = 0;
+            foreach (Recipe recipe in Recipes)
+            {
+                if (recipe.WasPromotedInInterval())
+                    promotionsInInterval++;
+            }
+            return promotionsInInterval;
         }
 
         internal int RemovePoint(RequirementType requirementType)
