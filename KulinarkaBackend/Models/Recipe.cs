@@ -70,5 +70,27 @@ namespace Kulinarka.Models
                     return true;
             return false;
         }
+        internal PromotionRewardRecipe GetActivePromotion()
+        {
+            if (Promotions == null)
+                return null;
+            foreach (PromotionRewardRecipe promotionRewardRecipe in Promotions)
+                if (promotionRewardRecipe.IsActive())
+                    return promotionRewardRecipe;
+            return null;
+        }
+
+        internal void UpdatePromotions(int newPromotionRewardId)
+        {
+            if (Promotions == null)
+                return;
+            foreach (PromotionRewardRecipe promotionRewardRecipe in Promotions)
+                promotionRewardRecipe.UpdateReward(newPromotionRewardId);
+        }
+
+        internal bool IsUserOwnerOfRecipe(int userId)
+        {
+            return UserId == userId;
+        }
     }
 }

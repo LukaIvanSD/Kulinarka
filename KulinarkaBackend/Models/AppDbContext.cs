@@ -29,7 +29,10 @@ namespace Kulinarka.Models
             modelBuilder.Entity<Recipe>()
        .Property(r => r.Duration)
        .HasColumnType("time(7)");
-            modelBuilder.Entity<Recipe>().HasOne(r => r.User).WithMany(u => u.Recipes).HasForeignKey(r => r.UserId);
+            modelBuilder.Entity<Recipe>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Recipes)
+                .HasForeignKey(r => r.UserId);
 
 
             modelBuilder.Entity<UserAchievement>()
@@ -70,7 +73,7 @@ namespace Kulinarka.Models
                 .HasOne(pr => pr.Title)
                 .WithOne(t => t.PromotionReward)
                 .HasForeignKey<PromotionReward>(pr => pr.TitleId);
-            modelBuilder.Entity<PromotionRewardRecipe>().HasKey(prr => new { prr.RecipeId, prr.DateUsed });
+            modelBuilder.Entity<PromotionRewardRecipe>().HasKey(prr => prr.Id);
             modelBuilder.Entity<PromotionRewardRecipe>()
                 .HasOne(ur => ur.Recipe)
                 .WithMany(r => r.Promotions)

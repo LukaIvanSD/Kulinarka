@@ -61,8 +61,10 @@ builder.Services.AddScoped<ITitleRepository, TitleRepository>();
 builder.Services.AddScoped<IUserStatisticRepository, UserStatisticRepository>();
 builder.Services.AddScoped<IUserStatisticService, UserStatisticService>();
 builder.Services.AddScoped<IPromotionRewardRecipeRepository, PromotionRewardRecipeRepository>();
-builder.Services.AddScoped<IPromotionRewardRecipeService, PromotionRewardService>();
+builder.Services.AddScoped<IPromotionRewardRecipeService, PromotionRewardRecipeService>();
 builder.Services.AddScoped<IPromotionRewardRepository, PromotionRewardRepository>();
+builder.Services.AddScoped<IPromotionRewardService, PromotionRewardService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<Func<IAchievementService>>(provider => () => provider.GetService<IAchievementService>());
 builder.Services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>());
 

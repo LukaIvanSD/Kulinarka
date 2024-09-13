@@ -1,9 +1,9 @@
 ﻿using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 
-namespace Kulinarka.RepositoryInterfaces
+namespace Kulinarka.ServiceInterfaces
 {
-    public interface IPromotionRewardRepository : IRepository<PromotionReward>
+    public interface IPromotionRewardService
     {
         Task<Response<PromotionReward>> GetByTitleId(int userTitleId);
     }

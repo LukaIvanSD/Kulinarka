@@ -50,7 +50,6 @@ namespace Kulinarka.Services
                 result = await AddAchievementAsync(achievement,false);
                 if (!result.IsSuccess)
                     throw new Exception(result.ErrorMessage);
-                //IUserAchievementService userAchievementService = userAchievementServiceFactory.Value;
                 result = await userAchievementServiceFactory.CreateUsersAchievement(result.Data);
                 if (!result.IsSuccess)
                     throw new Exception(result.ErrorMessage);

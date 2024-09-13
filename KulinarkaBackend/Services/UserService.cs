@@ -58,7 +58,6 @@ namespace Kulinarka.Services
             user.DateOfCreation = DateTime.Now;
             user.UserTitle= new UserTitle(user.Id);
             user.UserStatistic = new UserStatistic(user.Id);
-           // IUserAchievementService userAchievementServiceInstance = userAchievementServiceFactory;
             var result = await userAchievementServiceFactory.CreateUserAchievements(user);
             if (!result.IsSuccess)
                 return Response<User>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
@@ -74,6 +73,28 @@ namespace Kulinarka.Services
         public Task<Response<User>> GetByUsernameAsync(string username)
         {
             return userRepository.GetByUsernameAsync(username);
+        }
+
+        public Task<Response<User>> BeginTransactionAsync()
+        {
+            return userRepository.BeginTransactionAsync();
+        }
+        public async Task<Response<User>> CommitTransactionAsync()
+        {
+            return await userRepository.CommitTransactionAsync();
+        }
+        public async Task<Response<User>> RollbackTransactionAsync()
+        {
+            return await userRepository.RollbackTransactionAsync();
+        }
+        public async Task<Response<User>> SaveChangesAsync()
+        {
+            return await userRepository.SaveChangesAsync();
+        }
+
+        public Task<Response<User>> UpdateAsync(User user, bool saveChanges = true)
+        {
+            return userRepository.UpdateAsync(user.Id,user, saveChanges);
         }
     }
 }
