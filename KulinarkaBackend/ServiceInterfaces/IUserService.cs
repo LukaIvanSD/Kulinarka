@@ -12,5 +12,10 @@ namespace Kulinarka.Interfaces
         public Task<Response<User>> GetUserByIdAsync(int id);
         public Task<Response<User>> GetUserAchievementsEagerAsync(int id);
         Task<Response<User>> GetByUsernameAsync(string username);
+        Task<Response<User>> BeginTransactionAsync();
+        Task<Response<User>> SaveChangesAsync();
+        Task<Response<User>> CommitTransactionAsync();
+        Task<Response<User>> RollbackTransactionAsync();
+        Task<Response<User>> UpdateAsync(User user, bool saveChanges=true);
     }
 }

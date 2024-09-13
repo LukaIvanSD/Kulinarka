@@ -12,8 +12,9 @@ namespace Kulinarka.Services
         private readonly IPromotionRewardService promotionRewardService;
         private readonly IRecipeService recipeService;
         private readonly IUserTitleService userTitleService;
-        public PromotionRewardRecipeService(IPromotionRewardRecipeRepository promotionRewardRecipeRepository,IRecipeService recipeService,IUserTitleService userTitleService) {
+        public PromotionRewardRecipeService(IPromotionRewardRecipeRepository promotionRewardRecipeRepository,IPromotionRewardService promotionRewardService,IRecipeService recipeService,IUserTitleService userTitleService) {
             this.promotionRewardRecipeRepository = promotionRewardRecipeRepository;
+            this.promotionRewardService = promotionRewardService;
             this.recipeService = recipeService;
             this.userTitleService = userTitleService;
         }
@@ -23,7 +24,7 @@ namespace Kulinarka.Services
             var recipe = await recipeService.GetByIdAsync(recipeId);
             if(!recipe.IsSuccess)
                 return Response<PromotionRewardRecipe>.Failure(recipe.ErrorMessage, recipe.StatusCode);
-            if (!IsUserOwnerOfRecipe(user.Id,recipe.Data))
+            if (!recipe.Data.IsUserOwnerOfRecipe(user.Id))
                 return Response<PromotionRewardRecipe>.Failure("User is not owner of recipe",StatusCode.BadRequest);
             var recipesResult = await recipeService.GetUserRecipesWithPromotionsEagerAsync(user);
             if (!recipesResult.IsSuccess)
@@ -38,53 +39,42 @@ namespace Kulinarka.Services
             return await CreatePromotion(user,recipe.Data);
         }
 
-        public async Task<Response<PromotionRewardRecipe>> UpdateUserPromotions(User user)
+        public async Task<Response<PromotionRewardRecipe>> UpdateUserPromotions(User user,int newTitleId)
         {
             var result = await recipeService.GetUserRecipesWithPromotionsEagerAsync(user);
             if (!result.IsSuccess)
                 return Response<PromotionRewardRecipe>.Failure(result.ErrorMessage, result.StatusCode);
             user.Recipes = result.Data;
-            var promotionRewardResult = await promotionRewardService.GetByTitleId(user.UserTitle.TitleId);
-            if (!promotionRewardResult.IsSuccess)
-                return Response<PromotionRewardRecipe>.Failure(promotionRewardResult.ErrorMessage, promotionRewardResult.StatusCode);
-            PromotionReward newPromotionReward = promotionRewardResult.Data;
-            if (user.IsPromoted())
+            var newPromotionRewardResult = await promotionRewardService.GetByTitleId(newTitleId);
+            if (!newPromotionRewardResult.IsSuccess)
+                return Response<PromotionRewardRecipe>.Failure(newPromotionRewardResult.ErrorMessage, newPromotionRewardResult.StatusCode);
+            PromotionReward newPromotionReward = newPromotionRewardResult.Data;
+            user.UpdateRecipesPromotion(newPromotionReward.Id);
+            if (user.IsDemoted())
             {
-                foreach (Recipe recipe in user.Recipes)
-                {
-                    if (recipe.Promotions == null)
-                        continue;
-                    foreach (PromotionRewardRecipe promotionRewardRecipe in recipe.Promotions)
-                            promotionRewardRecipe.UpdateReward(newPromotionReward.Id);
-                }
+                var removeResult = await RemoveExcessPromotions(user, newPromotionReward);
+                if (!removeResult.IsSuccess)
+                    return Response<PromotionRewardRecipe>.Failure(removeResult.ErrorMessage, removeResult.StatusCode);
             }
-            else
+            return Response<PromotionRewardRecipe>.Success(null, StatusCode.OK);
+        }
+
+        private async Task<Response<PromotionRewardRecipe>> RemoveExcessPromotions(User user,PromotionReward newPromotionReward)
+        {
+            List<PromotionRewardRecipe> activePromotions = user.GetActivePromotions();
+            activePromotions = activePromotions.OrderBy(prr => prr.DateUsed).ToList();
+            while (activePromotions.Count > newPromotionReward.PostsToPromote)
             {
-                foreach (Recipe recipe in user.Recipes)
-                {
-                    if (recipe.Promotions == null)
-                        continue;
-                    foreach (PromotionRewardRecipe promotionRewardRecipe in recipe.Promotions)
-                        promotionRewardRecipe.UpdateReward(newPromotionReward.Id);
-                }
-                List<PromotionRewardRecipe> activePromotions = user.GetActivePromotions();
-                activePromotions = activePromotions.OrderBy(prr => prr.DateUsed).ToList();
-                while (activePromotions.Count > newPromotionReward.PostsToPromote)
-                {
-                    await promotionRewardRecipeRepository.DeleteAsync(activePromotions[0]);
-                    activePromotions.RemoveAt(0);
-                }
+                var deleteResult = await promotionRewardRecipeRepository.DeleteAsync(activePromotions[0],false);
+                if (!deleteResult.IsSuccess)
+                    return Response<PromotionRewardRecipe>.Failure(deleteResult.ErrorMessage, deleteResult.StatusCode);
+                activePromotions.RemoveAt(0);
             }
-            return await SaveUserPromotionsToDb(user);
+            return Response<PromotionRewardRecipe>.Success(null, StatusCode.OK);
         }
 
         private async Task<Response<PromotionRewardRecipe>> SaveUserPromotionsToDb(User user)
         {
-            var transactionResult = await promotionRewardRecipeRepository.BeginTransactionAsync();
-            if (!transactionResult.IsSuccess)
-                return Response<PromotionRewardRecipe>.Failure(transactionResult.ErrorMessage, StatusCode.InternalServerError);
-            try
-            {
                 foreach (Recipe recipe in user.Recipes)
                 {
                     if (recipe.Promotions == null)
@@ -96,30 +86,13 @@ namespace Kulinarka.Services
                             throw new Exception(result.ErrorMessage);
                     }
                 }
-                transactionResult = await promotionRewardRecipeRepository.SaveChangesAsync();
-                if (!transactionResult.IsSuccess)
-                    throw new Exception(transactionResult.ErrorMessage);
-                transactionResult = await promotionRewardRecipeRepository.CommitTransactionAsync();
-                if (!transactionResult.IsSuccess)
-                    throw new Exception(transactionResult.ErrorMessage);
-                return Response<PromotionRewardRecipe>.Success(null, StatusCode.OK);
-            }
-            catch (Exception ex)
-            {
-                await promotionRewardRecipeRepository.RollbackTransactionAsync();
-                return Response<PromotionRewardRecipe>.Failure(ex.Message, StatusCode.InternalServerError);
-            }
+            return Response<PromotionRewardRecipe>.Success(null, StatusCode.OK);
         }
 
         private async Task<Response<PromotionRewardRecipe>> CreatePromotion(User user,Recipe recipe)
         {
             PromotionRewardRecipe promotionRewardRecipe = new PromotionRewardRecipe(user.UserTitle.CurrentTitle.PromotionReward.Id,recipe.Id);
             return await promotionRewardRecipeRepository.CreateAsync(promotionRewardRecipe);
-        }
-
-        private bool IsUserOwnerOfRecipe(int userId,Recipe recipe)
-        {
-            return recipe.UserId == userId;
         }
     }
 }

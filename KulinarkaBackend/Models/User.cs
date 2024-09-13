@@ -125,9 +125,15 @@ namespace Kulinarka.Models
             return activePromotions;
         }
 
-        internal bool IsPromoted()
+        internal bool IsDemoted()
         {
-            return UserTitle.TitleId > UserTitle.CurrentTitle.Id;
+            return UserTitle.TitleId < UserTitle.CurrentTitle.Id;
+        }
+
+        internal void UpdateRecipesPromotion(int newPromotionRewardId)
+        {
+            foreach (Recipe recipe in Recipes)
+                recipe.UpdatePromotions(newPromotionRewardId);
         }
     }
 }

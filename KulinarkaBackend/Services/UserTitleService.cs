@@ -10,12 +10,9 @@ namespace Kulinarka.Services
     {
         private readonly IUserTitleRepository userTitleRepository;
         private readonly ITitleService titleService;
-        private readonly IPromotionRewardRecipeService promotionRewardService;
-        public UserTitleService(IUserTitleRepository userTitleRepository,ITitleService titleService, IPromotionRewardRecipeService promotionRewardRecipeService) {
+        public UserTitleService(IUserTitleRepository userTitleRepository,ITitleService titleService) {
             this.titleService = titleService;
             this.userTitleRepository = userTitleRepository;
-            this.promotionRewardService = promotionRewardRecipeService;
-
         }
 
         public async Task<Response<UserTitle>> GetUserTitleEagerAsync(int userId)
@@ -28,39 +25,40 @@ namespace Kulinarka.Services
             return userTitleRepository.GetUserTitleWithPromotionRewardEagerAsync(userId);
         }
 
-        public async Task<Response<UserTitle>> UpdateUserTitle(User user)
+        public async Task<Response<bool>> UpdateUserTitle(User user)
         {
             var userTitleResult = await GetUserTitleEagerAsync(user.Id);
             if (!userTitleResult.IsSuccess)
-                return Response<UserTitle>.Failure(userTitleResult.ErrorMessage, StatusCode.InternalServerError);
+                return Response<bool>.Failure(userTitleResult.ErrorMessage, StatusCode.InternalServerError);
             user.UserTitle = userTitleResult.Data;
-            if (!UpdateTitle(user).Result)
-                return Response<UserTitle>.Failure("Didnt update title", StatusCode.BadRequest);
-            var result = await promotionRewardService.UpdateUserPromotions(user);
-            if (!result.IsSuccess)
-                return Response<UserTitle>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
-            return await SaveUserTitleToDb(user);
+            var titleUpdateResult = await UpdateTitle(user);
+            if (!titleUpdateResult.IsSuccess)
+                return Response<bool>.Failure(titleUpdateResult.ErrorMessage, titleUpdateResult.StatusCode);
+            return Response<bool>.Success(titleUpdateResult.Data, StatusCode.OK);
         }
 
         private async Task<Response<UserTitle>> SaveUserTitleToDb(User user)
         {
-            var result = await userTitleRepository.UpdateAsync(user.UserTitle);
+            var result = await userTitleRepository.UpdateAsync(user.UserTitle,false);
             if (!result.IsSuccess)
                 return Response<UserTitle>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
             return Response<UserTitle>.Success(result.Data, StatusCode.OK);
 
         }
-        private async Task<bool> UpdateTitle(User user)
+        private async Task<Response<bool>> UpdateTitle(User user)
         {
             int achievements = user.UserAchievements.Where(ua => ua.IsCompleted()).Count();
             if (user.UserTitle.Demote(achievements))
-                return true;
-            user.UserTitle.NextTitle = (await titleService.GetNextTitle(user.UserTitle.TitleId)).Data;
+                return Response<bool>.Success(true,StatusCode.OK);
+            var titleResult = await titleService.GetNextTitle(user.UserTitle.TitleId);
+            if(!titleResult.IsSuccess)
+                return Response<bool>.Failure(titleResult.ErrorMessage, titleResult.StatusCode);
+            user.UserTitle.NextTitle = titleResult.Data;
             if (user.UserTitle.NextTitle == null)
-                return false;
+                return Response<bool>.Success(false, StatusCode.OK);
             if (user.UserTitle.Promote(achievements))
-                return true;
-            return false;
+                return Response<bool>.Success(true, StatusCode.OK);
+            return Response<bool>.Success(false, StatusCode.OK);
         }
     }
 }

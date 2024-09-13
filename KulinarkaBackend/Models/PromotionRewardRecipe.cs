@@ -5,6 +5,8 @@ namespace Kulinarka.Models
 {
     public class PromotionRewardRecipe
     {
+        [Key]
+        public int Id { get; set; }
         public int RecipeId { get; set; }
         [JsonIgnore]
         public virtual Recipe? Recipe { get; set; }

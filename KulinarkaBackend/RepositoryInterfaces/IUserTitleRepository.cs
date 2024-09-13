@@ -7,6 +7,6 @@ namespace Kulinarka.RepositoryInterfaces
     {
         Task<Response<UserTitle>> GetUserTitleEagerAsync(int userId);
         Task<Response<UserTitle>> GetUserTitleWithPromotionRewardEagerAsync(int userId);
-        Task<Response<UserTitle>> UpdateAsync(UserTitle userTitle);
+        Task<Response<UserTitle>> UpdateAsync(UserTitle userTitle,bool saveChanges=true);
     }
 }

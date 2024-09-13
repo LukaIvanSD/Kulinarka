@@ -74,14 +74,17 @@ namespace Kulinarka.SqlDbRepository
                 return Response<UserTitle>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }
-        public async Task<Response<UserTitle>> UpdateAsync(UserTitle userTitle)
+        public async Task<Response<UserTitle>> UpdateAsync(UserTitle userTitle,bool saveChanges=true)
         {
             try
             {
                 dbSet.Update(userTitle);
-                var result = await SaveChangesAsync();
-                if (!result.IsSuccess)
-                    return Response<UserTitle>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
+                if (saveChanges)
+                {
+                    var result = await SaveChangesAsync();
+                    if (!result.IsSuccess)
+                        return Response<UserTitle>.Failure(result.ErrorMessage, StatusCode.InternalServerError);
+                }
                 return Response<UserTitle>.Success(userTitle, StatusCode.OK);
             }
             catch (Exception ex)

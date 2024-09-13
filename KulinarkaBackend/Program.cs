@@ -64,6 +64,7 @@ builder.Services.AddScoped<IPromotionRewardRecipeRepository, PromotionRewardReci
 builder.Services.AddScoped<IPromotionRewardRecipeService, PromotionRewardRecipeService>();
 builder.Services.AddScoped<IPromotionRewardRepository, PromotionRewardRepository>();
 builder.Services.AddScoped<IPromotionRewardService, PromotionRewardService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<Func<IAchievementService>>(provider => () => provider.GetService<IAchievementService>());
 builder.Services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>());
 

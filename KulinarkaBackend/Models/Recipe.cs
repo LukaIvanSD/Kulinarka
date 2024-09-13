@@ -79,5 +79,18 @@ namespace Kulinarka.Models
                     return promotionRewardRecipe;
             return null;
         }
+
+        internal void UpdatePromotions(int newPromotionRewardId)
+        {
+            if (Promotions == null)
+                return;
+            foreach (PromotionRewardRecipe promotionRewardRecipe in Promotions)
+                promotionRewardRecipe.UpdateReward(newPromotionRewardId);
+        }
+
+        internal bool IsUserOwnerOfRecipe(int userId)
+        {
+            return UserId == userId;
+        }
     }
 }

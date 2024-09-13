@@ -1,4 +1,5 @@
-﻿namespace Kulinarka.Models.Responses
+﻿
+namespace Kulinarka.Models.Responses
 {
     public enum StatusCode{
         OK=200,
