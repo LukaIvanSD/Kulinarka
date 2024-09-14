@@ -41,6 +41,12 @@ namespace Kulinarka.Models
         public virtual User? User { get; set; }
         [JsonIgnore]
         public virtual ICollection<PromotionRewardRecipe>? Promotions { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<RecipeIngredient>? Ingredients { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<RecipeTag>? Tags { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<PreparationStep>? PreparationSteps { get; set; }
 
         internal DateTime? DatePromoted()
         {

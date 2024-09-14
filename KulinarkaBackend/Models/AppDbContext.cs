@@ -18,6 +18,12 @@ namespace Kulinarka.Models
         public DbSet<UserStatistic> UserStatistics { get; set; }
         public DbSet<PromotionReward> PromotionRewards { get; set; }
         public DbSet<PromotionRewardRecipe> PromotionRewardsRecipe { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<RecipeTag> RecipeTag { get; set; }
+        public DbSet<RecipeIngredient> RecipeIngredient { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<PreparationStep> PreparationStep { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var genderConverter = new EnumToStringConverter<Gender>();
@@ -81,6 +87,51 @@ namespace Kulinarka.Models
             modelBuilder.Entity<PromotionRewardRecipe>()
                 .HasOne(ur => ur.PromotionReward).WithMany()
                 .HasForeignKey(ur => ur.PromotionRewardId);
+
+            modelBuilder.Entity<RecipeTag>().HasKey(rt => rt.Id);
+            modelBuilder.Entity<RecipeTag>()
+                .HasOne(rt => rt.Recipe)
+                .WithMany(r => r.Tags)
+                .HasForeignKey(rt => rt.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<RecipeTag>()
+                .HasOne(rt => rt.Tag)
+                .WithMany(t=>t.RecipeTags)
+                .HasForeignKey(rt => rt.TagId);
+
+
+            var MeasurementUnitConverter = new EnumToStringConverter<MeasurementUnit>();
+            modelBuilder.Entity<RecipeIngredient>()
+                .Property(re=>re.MeasurementUnit)
+                .HasConversion(MeasurementUnitConverter);
+            modelBuilder.Entity<RecipeIngredient>().HasKey(ri => ri.Id);
+            modelBuilder.Entity<RecipeIngredient>()
+                .HasOne(ri => ri.Recipe)
+                .WithMany(r => r.Ingredients)
+                .HasForeignKey(ri => ri.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<RecipeIngredient>()
+                .HasOne(ri => ri.Ingredient)
+                .WithMany(i => i.RecipeIngredients)
+                .HasForeignKey(ri => ri.IngredientId);
+
+
+            modelBuilder.Entity<PreparationStep>().HasKey(ps => ps.Id);
+            modelBuilder.Entity<PreparationStep>()
+                .HasOne(ps => ps.Recipe)
+                .WithMany(r => r.PreparationSteps)
+                .HasForeignKey(ps => ps.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            var tagTypeConverter = new EnumToStringConverter<TagType>();
+
+            modelBuilder.Entity<Tag>().HasKey(i => i.Id);
+            modelBuilder.Entity<Tag>()
+                .Property(t => t.TagType)
+                .HasConversion(tagTypeConverter);
+
+
             base.OnModelCreating(modelBuilder);
 
         }

@@ -16,8 +16,10 @@ namespace Kulinarka.Controllers
         private readonly ILoginService loginService;
         private readonly ISessionService sessionService;
         private readonly IMapper mapper;
-        public RecipesController(IRecipeService recipeService,ILoginService loginService,ISessionService sessionService,IMapper mapper)
+        private readonly PostRecipeService postRecipeService;
+        public RecipesController(IRecipeService recipeService,ILoginService loginService,ISessionService sessionService,IMapper mapper,PostRecipeService postRecipeService)
         {
+            this.postRecipeService = postRecipeService;
             this.mapper = mapper;
             this.recipeService = recipeService;
             this.loginService = loginService;
@@ -36,12 +38,12 @@ namespace Kulinarka.Controllers
             return HandleResponse(result);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateRecipe([FromBody] Recipe recipe)
+        public async Task<IActionResult> CreateRecipe([FromBody] PostRecipeDTO recipe)
         {
             var loginResult = await loginService.GetSessionAsync();
             if (!loginResult.IsSuccess)
                 return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
-            var result = await recipeService.AddAsync(loginResult.Data, recipe);
+            var result = await postRecipeService.AddRecipeAsync(loginResult.Data, recipe);
             return HandleResponse(result);
         }
         [HttpPut("{id}")]
