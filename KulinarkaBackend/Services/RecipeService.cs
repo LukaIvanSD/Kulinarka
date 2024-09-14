@@ -25,11 +25,11 @@ namespace Kulinarka.Services
         {
             return await recipeRepository.GetByIdAsync(id);
         }
-        public async Task<Response<Recipe>> AddAsync(User user ,Recipe recipe)
+        public async Task<Response<Recipe>> AddAsync(User user ,Recipe recipe,bool saveChanges=true)
         {
             recipe.UserId = user.Id;
             recipe.CreationDate = DateTime.Now;
-            return await recipeRepository.CreateAsync(recipe);
+            return await recipeRepository.CreateAsync(recipe,saveChanges);
 
         }
         public async Task<Response<Recipe>> UpdateAsync(User user,Recipe newRecipe)
@@ -92,6 +92,26 @@ namespace Kulinarka.Services
         {
             var result = await recipeRepository.GetUserRecipesWithPromotionsEagerAsync(user.Id);
             return result;
+        }
+
+        public async Task<Response<Recipe>> BeginTransactionAsync()
+        {
+            return await recipeRepository.BeginTransactionAsync();
+        }
+
+        public async Task<Response<Recipe>> CommitTransactionAsync()
+        {
+            return await recipeRepository.CommitTransactionAsync();
+        }
+
+        public async Task<Response<Recipe>> RollbackTransactionAsync()
+        {
+            return await recipeRepository.RollbackTransactionAsync();
+        }
+
+        public async Task<Response<Recipe>> SaveChangesAsync()
+        {
+            return await recipeRepository.SaveChangesAsync();
         }
     }
 }

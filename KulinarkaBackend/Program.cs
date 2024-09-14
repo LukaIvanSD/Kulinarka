@@ -65,6 +65,18 @@ builder.Services.AddScoped<IPromotionRewardRecipeService, PromotionRewardRecipeS
 builder.Services.AddScoped<IPromotionRewardRepository, PromotionRewardRepository>();
 builder.Services.AddScoped<IPromotionRewardService, PromotionRewardService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IPreparationStepService, PreparationStepService>();
+builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
+builder.Services.AddScoped<IRecipeTagService, RecipeTagService>();
+builder.Services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
+builder.Services.AddScoped<IPreparationStepRepository, PreparationStepRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+builder.Services.AddScoped<IRecipeTagRepository, RecipeTagRepository>();
+builder.Services.AddScoped<PostRecipeService> ();
+
 builder.Services.AddScoped<Func<IAchievementService>>(provider => () => provider.GetService<IAchievementService>());
 builder.Services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>());
 
