@@ -8,6 +8,7 @@ namespace Kulinarka.Interfaces
     {
         Task<Response<List<Recipe>>> GetAllAsync();
         Task<Response<Recipe>> GetByIdAsync(int id);
+        Task<Response<RecipeDTO>> GetByIdWithDetailsAsync(int id);
         Task<Response<Recipe>> AddAsync(User user, Recipe recipe,bool saveChanges=true);
         Task<Response<Recipe>> UpdateAsync(User user, Recipe recipe);
         Task<Response<Recipe>> DeleteAsync(User user, int id);

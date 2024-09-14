@@ -113,5 +113,14 @@ namespace Kulinarka.Services
         {
             return await recipeRepository.SaveChangesAsync();
         }
+        public async Task<Response<RecipeDTO>> GetByIdWithDetailsAsync(int id)
+        {
+            var recipeResult = await recipeRepository.GetRecipeDetailsEagerAsync(id);
+            if (!recipeResult.IsSuccess)
+                return Response<RecipeDTO>.Failure(recipeResult.ErrorMessage, recipeResult.StatusCode);
+            if (recipeResult.Data == null)
+                return Response<RecipeDTO>.Failure("Recipe not found", StatusCode.NotFound);
+            return Response<RecipeDTO>.Success(new RecipeDTO(recipeResult.Data), StatusCode.OK);
+        }
     }
 }

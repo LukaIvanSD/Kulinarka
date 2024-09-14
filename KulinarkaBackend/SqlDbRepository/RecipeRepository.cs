@@ -84,5 +84,22 @@ namespace Kulinarka.SqlDbRepository
                 return Response<List<Recipe>>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }
+
+        public async Task<Response<Recipe>> GetRecipeDetailsEagerAsync(int id)
+        {
+            try { 
+                Recipe foundRecipe = await dbSet
+                    .Include(r=>r.Ingredients).ThenInclude(ri=>ri.Ingredient)
+                    .Include(r=>r.Tags).ThenInclude(rt=>rt.Tag)
+                    .Include(r=>r.PreparationSteps)
+                    .Include(r => r.Promotions).ThenInclude(prr => prr.PromotionReward)
+                    .FirstOrDefaultAsync(r => r.Id == id);
+                return Response<Recipe>.Success(foundRecipe, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<Recipe>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
     }
 }

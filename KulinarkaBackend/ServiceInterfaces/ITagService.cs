@@ -7,6 +7,5 @@ namespace Kulinarka.ServiceInterfaces
     public interface ITagService
     {
         Task<Response<Tag>> GetByIdAsync(int id);
-        Task<Response<Tag>> GetTag(Tag tag);
     }
 }

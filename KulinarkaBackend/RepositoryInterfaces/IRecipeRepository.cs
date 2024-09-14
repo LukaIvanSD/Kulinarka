@@ -12,5 +12,6 @@ namespace Kulinarka.RepositoryInterfaces
         Task<Response<Recipe>> DeleteAsync(int id, bool saveChanges = true);
         Task<Response<List<Recipe>>> GetRecipesAndPromotionsEagerAsync();
         Task<Response<List<Recipe>>> GetUserRecipesWithPromotionsEagerAsync(int userId);
+        Task<Response<Recipe>> GetRecipeDetailsEagerAsync(int id);
     }
 }

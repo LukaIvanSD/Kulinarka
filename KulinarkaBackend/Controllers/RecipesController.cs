@@ -34,7 +34,7 @@ namespace Kulinarka.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetRecipe(int id)
         {
-            var result= await recipeService.GetByIdAsync(id);
+            var result= await recipeService.GetByIdWithDetailsAsync(id);
             return HandleResponse(result);
         }
         [HttpPost]

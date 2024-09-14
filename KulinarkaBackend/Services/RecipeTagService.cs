@@ -19,7 +19,7 @@ namespace Kulinarka.Services
             List<RecipeTag> recipeTags = new List<RecipeTag>();
             foreach (Tag tag in tags)
             {
-                var tagResult = await tagService.GetTag(tag);
+                var tagResult = await tagService.GetByIdAsync(tag.Id);
                 if (!tagResult.IsSuccess)
                     return Response<List<RecipeTag>>.Failure(tagResult.ErrorMessage, tagResult.StatusCode);
                 RecipeTag recipeTag = new RecipeTag(recipeId, tagResult.Data.Id);
