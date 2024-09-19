@@ -25,6 +25,7 @@ namespace Kulinarka.DTO
         public virtual ICollection<RecipeTag>? Tags { get; set; }
         public virtual ICollection<PreparationStep>? PreparationSteps { get; set; }
         public bool IsPromoted { get; set; }
+        public RecipeDTO() { }
         public RecipeDTO(Recipe recipe)
         {
             Id = recipe.Id;

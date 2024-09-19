@@ -2,6 +2,7 @@
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Kulinarka.SqlDbRepository
 {
@@ -49,7 +50,8 @@ namespace Kulinarka.SqlDbRepository
         {
             try 
             {
-                var ingredient = await dbSet.FirstOrDefaultAsync(i => i.Name == ingredientName);
+                Debug.WriteLine(ingredientName);
+                Ingredient ingredient = await dbSet.FirstOrDefaultAsync(i => i.Name == ingredientName);
                 return Response<Ingredient>.Success(ingredient, StatusCode.OK);
             }
             catch (Exception ex)

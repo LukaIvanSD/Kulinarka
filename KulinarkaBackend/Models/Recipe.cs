@@ -23,7 +23,7 @@ namespace Kulinarka.Models
 
         public string? Description { get; set; }
         //[Required(ErrorMessage ="Picture of recipe is required")]
-        public byte[]? Picture { get; set; }
+        public byte[] Picture { get; set; }
 
         public byte[]? VideoData { get; set; }
         [MaxLength(100)]

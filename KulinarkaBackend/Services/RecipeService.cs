@@ -54,7 +54,7 @@ namespace Kulinarka.Services
 
         public async Task<Response<List<SortedRecipesDTO>>> GetSortedAsync()
         {
-            var result = await recipeRepository.GetRecipesAndPromotionsEagerAsync();
+            var result = await recipeRepository.GetRecipesAndPromotionsAndOwnerEagerAsync();
             if (!result.IsSuccess)
                 return Response<List<SortedRecipesDTO>>.Failure(result.ErrorMessage, result.StatusCode);
             List<Recipe> sortedRecipes = SortRecipes(result.Data).Result;
@@ -67,7 +67,7 @@ namespace Kulinarka.Services
             List<SortedRecipesDTO> sortedRecipesDTO=new List<SortedRecipesDTO>();
             foreach (Recipe recipe in sortedRecipes)
             {
-                SortedRecipesDTO dto = new SortedRecipesDTO(recipe, recipe.IsPromoted());
+                SortedRecipesDTO dto = new SortedRecipesDTO(recipe, recipe.IsPromoted(),recipe.User.Username);
                 sortedRecipesDTO.Add(dto);
             }
             return sortedRecipesDTO;
@@ -121,6 +121,11 @@ namespace Kulinarka.Services
             if (recipeResult.Data == null)
                 return Response<RecipeDTO>.Failure("Recipe not found", StatusCode.NotFound);
             return Response<RecipeDTO>.Success(new RecipeDTO(recipeResult.Data), StatusCode.OK);
+        }
+
+        public async Task<Response<Recipe>> UpdateWithDetailsAsync(User user, Recipe recipe)
+        {
+            return await UpdateAsync(user, recipe);
         }
     }
 }

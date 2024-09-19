@@ -19,5 +19,6 @@ namespace Kulinarka.Interfaces
         Task<Response<Recipe>> CommitTransactionAsync();
         Task<Response<Recipe>> RollbackTransactionAsync();
         Task<Response<Recipe>> SaveChangesAsync();
+        Task<Response<Recipe>> UpdateWithDetailsAsync(User user, Recipe recipe);
     }
 }

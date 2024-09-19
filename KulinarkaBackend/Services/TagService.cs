@@ -12,6 +12,12 @@ namespace Kulinarka.Services
         {
             this.tagRepository = tagRepository;
         }
+
+        public Task<Response<List<Tag>>> GetAllAsync()
+        {
+            return tagRepository.GetAllAsync();
+        }
+
         public async Task<Response<Tag>> GetByIdAsync(int id)
         {
             return await tagRepository.GetByIdAsync(id);

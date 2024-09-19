@@ -59,11 +59,11 @@ namespace Kulinarka.SqlDbRepository
             return repository.RollbackTransactionAsync();
         }
 
-        public async Task<Response<List<Recipe>>> GetRecipesAndPromotionsEagerAsync()
+        public async Task<Response<List<Recipe>>> GetRecipesAndPromotionsAndOwnerEagerAsync()
         {
             try 
             { 
-                List<Recipe>recipes= await dbSet.Include(r=>r.Promotions).ThenInclude(prr=>prr.PromotionReward).ToListAsync();
+                List<Recipe>recipes= await dbSet.Include(r=>r.User).Include(r=>r.Promotions).ThenInclude(prr=>prr.PromotionReward).ToListAsync();
                 return Response<List<Recipe>>.Success(recipes,StatusCode.OK);
             }
             catch (Exception ex)

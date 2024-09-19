@@ -1,0 +1,44 @@
+.profilePicture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.statusBar{
+  background-color: #6f4f28 ;
+  padding: 10px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+h1{
+  padding: 0;
+  margin: 0;
+}
+.logoname{
+  display:flex;
+  color: #f5f5f5;
+  margin-left: 30px;
+} 
+button {
+  background-color: #f5f5f5; /* Krem bela boja pozadine dugmeta */
+  color: #6f4f28; /* Tamno braon boja slova */
+  border: 2px solid #6f4f28; /* Tamno braon okvir */
+  padding: 10px 20px; /* Unutrašnji razmak */
+  border-radius: 5px; /* Zaobljeni uglovi */
+  font-size: 16px; /* Veličina fonta */
+  cursor: pointer; /* Pokazivač miša */
+  transition: background-color 0.3s, color 0.3s; /* Glatka promena boja pri prelazu */
+}
+
+button:hover {
+  background-color: #e07f08; /* Tamno braon pozadina pri prelazu */
+  color: #f5f5f5; /* Krem bela boja slova pri prelazu */
+}
+.functions{
+  display: flex;
+  flex-direction:row;
+  gap: 30px;
+  margin-right: 30px;
+}

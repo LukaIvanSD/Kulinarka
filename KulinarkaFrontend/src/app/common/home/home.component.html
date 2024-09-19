@@ -1,0 +1,9 @@
+<div class="recipes-container">
+    <div  *ngFor="let recipe of recipes" (click)="ShowRecipeDetails(recipe.id)" class="recipe-card">
+        <div class="card">
+            <img [src]="'data:image/jpeg;base64,' + recipe.pictureBase64" alt="Recipe Picture">
+            <p>{{recipe.name}}</p>
+            <p>{{recipe.ownerUsername}}</p>
+        </div>
+    </div>
+</div>

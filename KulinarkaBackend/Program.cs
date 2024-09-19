@@ -1,4 +1,4 @@
-using Kulinarka.Interfaces;
+﻿using Kulinarka.Interfaces;
 using Kulinarka.Middleware;
 using Kulinarka.Models;
 using Kulinarka.Profiles;
@@ -7,6 +7,7 @@ using Kulinarka.ServiceInterfaces;
 using Kulinarka.Services;
 using Kulinarka.SqlDbRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 //Adds cors filters
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowSpecificOrigins",
+       policy =>
+       {
+           policy.WithOrigins("http://localhost:4200")
+                 .AllowAnyMethod()
+                 .AllowAnyHeader()
+                 .AllowCredentials();
+       });
 });
 
 //Adds Session
@@ -29,6 +31,8 @@ builder.Services.AddSession(option => {
     option.IdleTimeout = TimeSpan.FromMinutes(10);
     option.Cookie.HttpOnly = true;
     option.IOTimeout = TimeSpan.FromSeconds(20);
+    option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    option.Cookie.SameSite = SameSiteMode.None;
 });
 
 //Add automappers
@@ -95,7 +99,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors("AllowAllOrigins");
+app.UseCors("AllowSpecificOrigins");
 
 app.UseHttpsRedirection();
 

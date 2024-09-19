@@ -14,7 +14,13 @@ namespace Kulinarka.Models
         public string Description { get; set; }
         [JsonIgnore]
         public virtual Recipe? Recipe { get; set; }
-
+        public PreparationStep(string description,int sequenceNumber,int recipeId) 
+        {
+            Description = description;
+            SequenceNum = sequenceNumber;
+            RecipeId = recipeId;
+        }
+        public PreparationStep() { }
         internal bool IsSequenceValid(int maxSteps)
         {
             return SequenceNum > 0 && SequenceNum <= maxSteps;

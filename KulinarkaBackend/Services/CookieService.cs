@@ -14,6 +14,9 @@ namespace Kulinarka.Services
         public  void SetCookie(string key,string value,int yearsValid=5)
         {
             CookieOptions option = new CookieOptions();
+            option.SameSite = SameSiteMode.None;
+            option.HttpOnly = true;
+            option.Secure = true;
             option.Expires = DateTime.Now.AddYears(yearsValid);
             httpContextAccessor.HttpContext.Response.Cookies.Append(key, value, option);
         }
@@ -23,7 +26,12 @@ namespace Kulinarka.Services
         }
         public  void RemoveCookie(string key)
         {
-            httpContextAccessor.HttpContext.Response.Cookies.Delete(key);
+            httpContextAccessor.HttpContext.Response.Cookies.Delete(key, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure=true,
+                SameSite=SameSiteMode.None
+            });
         }
 
         public  void SetLoginCookie(string username, int yearsValid=5) {

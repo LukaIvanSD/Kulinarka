@@ -1,0 +1,20 @@
+<div class="statusBar">
+    <div class="logoname" (click)="Home()">
+        <div class="logo">
+            <img src="assets/logo.png" alt="Logo">
+        </div>
+        <div class="name">
+            <h1>Кулинарка</h1>
+        </div>
+    </div>
+    <div>
+        <div *ngIf="showStatusBar" class="functions">
+        <button *ngIf="user!==null" (click)="AddRecipe()">Додај рецепт</button>
+        <button *ngIf="user===null" (click)="Login()">Пријави се</button>
+        <button *ngIf="user!==null" (click)="Logout()">Одјави се</button>
+        <button *ngIf="user===null" (click)="Register()">Региструј се</button>
+        <img class="profilePicture" *ngIf="user?.picture!==null" [src]="imgSrc" alt="User Picture">
+        <button *ngIf="user!==null" (click)="ShowProfile()">Профил</button>
+        </div>
+    </div>
+</div>
