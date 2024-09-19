@@ -1,0 +1,109 @@
+<form [formGroup]="recipeForm" (ngSubmit)="CreateRecipe()">
+    <div class="form-group">
+      <label for="name">Име:</label>
+      <input type="text" class="form-control" id="name" formControlName="name">
+    </div>
+    
+    <div class="form-group">
+      <label for="image">Слика:</label>
+      <input type="file" (change)="UploadMedia($event, 'image')" accept="image/*">
+    </div>
+    
+    <div class="form-group">
+      <label for="video">Видео:</label>
+      <input type="file" (change)="UploadMedia($event, 'video')" accept="video/*">
+    </div>
+    
+    <div class="form-group">
+      <label for="description">Опис:</label>
+      <textarea class="form-control" id="description" formControlName="description"></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label for="duration">Трајање:</label>
+      <input type="number" class="form-control" id="duration" formControlName="duration">
+    </div>
+    
+    <div class="form-group">
+      <label for="difficulty">Тежина:</label>
+      <select formControlName="difficulty">
+        <option value="Easy">Лако</option>
+        <option value="Medium">Средње</option>
+        <option value="Hard">Тешко</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="numberOfPeople">Број људи:</label>
+      <input type="number" class="form-control" id="numberOfPeople" formControlName="numberOfPeople">
+    </div>
+    
+    <div class="form-group">
+      <label for="chefsAdvice">Савет:</label>
+      <textarea class="form-control" id="chefsAdvice" formControlName="chefsAdvice"></textarea>
+    </div>
+    
+    <div formArrayName="ingredients">
+      <div *ngFor="let ingredient of ingredients.controls; let i = index" [formGroupName]="i">
+        <div class="form-group">
+          <label for="ingredientName">Састојак:</label>
+          <input type="text" class="form-control" id="ingredientName" formControlName="name">
+        </div>
+        <div class="form-group">
+          <label for="ingredientAmount">Количина:</label>
+          <input type="number" class="form-control" id="ingredientAmount" formControlName="amount">
+        </div>
+        <div class="form-group">
+          <label for="ingredientMeasurementUnit">Мерна јединица:</label>
+          <select formControlName="measurementUnit">
+            <option value="Gram">г</option>
+            <option value="Kilogram">кг</option>
+            <option value="Milliliter">мл</option>
+            <option value="Liter">л</option>
+            <option value="pcs">ком</option>
+            <option value="Piece">Komad</option>
+            <option value="Tablespoon">Kašika</option>
+            <option value="Teaspoon">Kašičica</option>
+            <option value="Drop">Kapi</option>
+            <option value="Cup">Šolja</option>
+            <option value="Slice">Kriška</option>
+          </select>
+        </div>
+        <button type="button" (click)="removeIngredient(i)">Уклони састојак</button>
+      </div>
+      <button type="button" (click)="AddIngredient()">Додај састојак</button>
+    </div>
+    
+    <div formArrayName="steps">
+      <div *ngFor="let step of steps.controls; let i = index" [formGroupName]="i">
+        <div class="form-group">
+          <label for="stepDescription">Опис:</label>
+          <textarea class="form-control" id="stepDescription" formControlName="description"></textarea>
+        </div>
+        <div class="form-group">
+          <button type="button" (click)="removeStep(i)">Обриши корак</button>
+        </div>
+      </div>
+      <button type="button" (click)="AddStep()">Додај корак</button>
+    </div>
+    
+    <div class="form-group">
+      <label>Тип оброка:</label>
+      <div *ngFor="let tag of mealTimeTag; let i = index">
+        <input type="checkbox" (change)="onTagChange(tag,$event)"> {{tag.name}}
+      </div>
+    
+      <label>Метод кувања:</label>
+      <div *ngFor="let tag of preparationMethodTag; let i = index">
+        <input type="checkbox" (change)="onTagChange(tag, $event)"> {{tag.name}}
+      </div>
+    
+      <label>Смера:</label>
+      <div *ngFor="let tag of flavorTag; let i = index">
+        <input type="checkbox" (change)="onTagChange(tag, $event)"> {{tag.name}}
+      </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  

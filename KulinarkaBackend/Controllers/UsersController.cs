@@ -38,8 +38,16 @@ namespace WebApplication1.Controllers
         }
         // POST api/users
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] User user)
+        public async Task<IActionResult> Post(IFormFile picture,[FromForm] User user)
         {
+            if (picture != null)
+            {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await picture.CopyToAsync(memoryStream);
+                        user.Picture = memoryStream.ToArray();
+                    }
+            }
             var result = await _userService.RegisterUserAsync(user);
             return HandleResponse(result);
         }

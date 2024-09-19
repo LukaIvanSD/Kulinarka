@@ -1,4 +1,5 @@
-﻿using Kulinarka.Models;
+﻿using Kulinarka.DTO;
+using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
 using Kulinarka.ServiceInterfaces;
@@ -12,40 +13,50 @@ namespace Kulinarka.Services
         {
             this.preparationStepRepository = preparationStepRepository;
         }
-        public async Task<Response<List<PreparationStep>>> AddAsync(int recipeId, List<PreparationStep> preparationSteps)
+        public async Task<Response<List<PreparationStep>>> AddAsync(int recipeId, List<PreparationStepDTO> preparationStepsDTO)
         {
-            var validationResult = ValidatePreparationSteps(preparationSteps);
+            var validationResult = ValidatePreparationSteps(preparationStepsDTO);
             if (!validationResult.IsSuccess)
                 return Response<List<PreparationStep>>.Failure(validationResult.ErrorMessage, StatusCode.BadRequest);
-
-            foreach (PreparationStep step in preparationSteps)
+            List<PreparationStep>preparationSteps = new List<PreparationStep>();
+            foreach (PreparationStepDTO step in preparationStepsDTO)
             {
-                step.RecipeId = recipeId;
-                var result = await preparationStepRepository.CreateAsync(step, false);
+                PreparationStep preparationStep = CreatePreparationStep(step,recipeId);
+                var result = await preparationStepRepository.CreateAsync(preparationStep, false);
                 if (!result.IsSuccess)
                     return Response<List<PreparationStep>>.Failure(result.ErrorMessage, result.StatusCode);
+                preparationSteps.Add(result.Data);
             }
 
             return Response<List<PreparationStep>>.Success(preparationSteps, StatusCode.Created);
         }
 
-        private Response<PreparationStep> ValidatePreparationSteps(List<PreparationStep> preparationSteps)
+        private PreparationStep CreatePreparationStep(PreparationStepDTO step, int recipeId)
+        {
+            return new PreparationStep(step.Description, step.SequenceNumber, recipeId);
+        }
+
+        private Response<PreparationStepDTO> ValidatePreparationSteps(List<PreparationStepDTO> preparationSteps)
         {
             int totalSteps = preparationSteps.Count;
             HashSet<int> existingSequences = new HashSet<int>();
 
-            foreach (PreparationStep step in preparationSteps)
+            foreach (PreparationStepDTO step in preparationSteps)
             {
-                if (existingSequences.Contains(step.SequenceNum))
-                    return Response<PreparationStep>.Failure("Duplicate sequence number",StatusCode.BadRequest);
+                if (existingSequences.Contains(step.SequenceNumber))
+                    return Response<PreparationStepDTO>.Failure("Duplicate sequence number",StatusCode.BadRequest);
 
-                if (!step.IsSequenceValid(totalSteps))
-                    return Response<PreparationStep>.Failure("Invalid sequence number", StatusCode.BadRequest);
+                if (!IsSequenceValid(totalSteps,step.SequenceNumber))
+                    return Response<PreparationStepDTO>.Failure("Invalid sequence number", StatusCode.BadRequest);
 
-                existingSequences.Add(step.SequenceNum);
+                existingSequences.Add(step.SequenceNumber);
             }
-            return Response<PreparationStep>.Success(null, StatusCode.OK);
+            return Response<PreparationStepDTO>.Success(null, StatusCode.OK);
         }
 
+        private bool IsSequenceValid(int totalSteps,int sequenceNumber)
+        {
+            return sequenceNumber > 0 && sequenceNumber <= totalSteps;
+        }
     }
 }

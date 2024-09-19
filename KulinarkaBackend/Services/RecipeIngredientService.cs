@@ -20,7 +20,7 @@ namespace Kulinarka.Services
             List<RecipeIngredient> recipeIngredients = new List<RecipeIngredient>();
             foreach (RecipeIngredientDTO recipeIngredientDTO in recipeIngredientDTOs)
             {
-                var ingredientResult = await ingredientService.GetIngredientByName(recipeIngredientDTO.IngredientName);
+                var ingredientResult = await ingredientService.GetIngredientByName(recipeIngredientDTO.Name);
                 if (!ingredientResult.IsSuccess)
                     return Response<List<RecipeIngredient>>.Failure(ingredientResult.ErrorMessage, ingredientResult.StatusCode);
                 RecipeIngredient recipeIngredient = GenerateRecipeIngredient(recipeId, ingredientResult.Data.Id,recipeIngredientDTO);

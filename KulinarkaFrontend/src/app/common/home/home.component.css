@@ -1,0 +1,17 @@
+.recipes-container{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 20px;
+}
+.recipe-card {
+    flex: 1 1 calc(33.333% - 20px); /* Tri kartice u jednom redu minus razmak */
+    box-sizing: border-box; /* Uključuje padding i border u širinu i visinu */
+    max-width: calc(33.333% - 20px); /* Ograničava maksimalnu širinu kartica */
+    /* Dodajte dodatne stilove za karticu kao što su margin, padding, border, itd. */
+  }
+  
+  .card img {
+    width: 100%; /* Slika će zauzeti celokupnu širinu kartice */
+    height: auto; /* Očuva odnos širine i visine slike */
+  }

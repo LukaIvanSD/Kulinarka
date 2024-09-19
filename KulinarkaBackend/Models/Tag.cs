@@ -5,9 +5,6 @@ namespace Kulinarka.Models
 {
     public enum TagType
     {
-        Difficulty,
-        PeopleNumber,
-        PreparationTime,
         PreparationMethod,
         MealTime,
         Flavor

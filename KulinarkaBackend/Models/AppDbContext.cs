@@ -26,6 +26,10 @@ namespace Kulinarka.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+            .Property(u => u.Picture)
+            .HasColumnType("varbinary(max)");
+
             var genderConverter = new EnumToStringConverter<Gender>();
             modelBuilder.Entity<User>()
                 .Property(u => u.Gender)

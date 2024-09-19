@@ -56,6 +56,7 @@ namespace Kulinarka.Models
         public virtual UserTitle? UserTitle { get; set; }
         [JsonIgnore]
         public virtual UserStatistic? UserStatistic { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Recipe>? Recipes { get; set; }
 
         public int AddPoint(RequirementType requirementType)

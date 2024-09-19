@@ -1,4 +1,5 @@
-﻿using Kulinarka.Interfaces;
+﻿using Kulinarka.DTO;
+using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.ServiceInterfaces;

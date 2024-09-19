@@ -1,0 +1,43 @@
+<form [formGroup]="registerForm"  enctype="multipart/form-data" (ngSubmit)="RegisterUser()">
+    <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" formControlName="firstName" id="firstName">
+    </div>
+    <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" formControlName="lastName" id="lastName">
+    </div>
+    <div class="form-group">
+        <label for="gender">Gender</label>
+        <input type="radio" value="Male" formControlName="gender" id="male">
+        <label for="male">Male</label>
+        <input type="radio" value="Female" formControlName="gender" id="female">
+        <label for="female">Female</label>
+      </div>
+    <div class="form-group">
+        <label for="birthday">Birthday</label>
+        <input type="date" class="form-control" formControlName="birthday" id="birthday">
+    </div>
+    <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" class="form-control" formControlName="location" id="location">
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" formControlName="email" id="email">
+    </div>
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" formControlName="username" id="username">
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" formControlName="password" id="password">
+    </div>
+    <div class="form-group">
+        <label for="picture">Upload Picture</label>
+        <input type="file" (change)="UploadFile($event)" id="picture">
+      </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+
+    </form>
