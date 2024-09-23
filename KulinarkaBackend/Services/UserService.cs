@@ -96,5 +96,10 @@ namespace Kulinarka.Services
         {
             return userRepository.UpdateAsync(user.Id,user, saveChanges);
         }
+
+        public Task<Response<User>> GetUserTitleAndStatisticAndRewardsEagerAsync(int userId)
+        {
+            return userRepository.GetUserTitleAndStatisticAndRewardsEagerAsync(userId);
+        }
     }
 }

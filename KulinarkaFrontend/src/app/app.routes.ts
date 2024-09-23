@@ -8,6 +8,7 @@ import { HomeComponent } from './common/home/home.component';
 import { RegisterComponent } from './common/register/register.component';
 import { ProfileComponent } from './common/profile/profile.component';
 import { AddRecipeComponent } from './common/add-recipe/add-recipe.component';
+import { UserRecipesComponent } from './common/user-recipes/user-recipes.component';
 
 export const routes: Routes = [
     {
@@ -27,6 +28,9 @@ export const routes: Routes = [
     },
     {
         path:'addRecipe',loadComponent:()=>import("./common/add-recipe/add-recipe.component").then(r=>r.AddRecipeComponent)
+    },
+    {
+        path:'myRecipes',loadComponent:()=>import('./common/user-recipes/user-recipes.component').then(r=>r.UserRecipesComponent)
     },
     {
         path:'**' ,component:StatusComponent

@@ -1,1 +1,71 @@
-<p>recipe-details works!</p>
+<div>
+    <div>
+        <p>Informacije o vlasniku</p>
+        <div>
+            <img [src]="'data:image/jpeg;base64,' + recipe.owner.pictureBase64 " alt="Owner Picture">
+            <p>Корисничко име: {{recipe.owner.username}}</p>
+            <p>Datum kreiranja naloga: {{recipe.owner.dateOfCreation}}</p>
+            <p>Titula: {{recipe.owner.titleName}}</p>
+    </div>
+    <div>
+        <p>Информације о рецепту</p>
+        <button (click)="OpenEditModal()">Izmeni podatke o receptu</button>
+        <div *ngIf="isEditModalOpen" class="modal">
+            <h2>Izmeni recept</h2>
+            <label>
+                Ime recepta:
+                <input [(ngModel)]="recipe.name" />
+            </label>
+            <label>
+                Opiši:
+                <textarea [(ngModel)]="recipe.description"></textarea>
+            </label>
+            <label>
+                Vreme pripreme:
+                <input type="number" [(ngModel)]="recipe.duration" /> minuta
+            </label>
+            <label>
+                Broj osoba:
+                <input type="number" [(ngModel)]="recipe.numberOfPeople" />
+            </label>
+            <label>
+                Težina pripreme:
+                <input [(ngModel)]="recipe.difficulty" />
+            </label>
+            <label>
+                Savet kuvara:
+                <input [(ngModel)]="recipe.chefsAdvice" />
+            </label>
+            <button (click)="SaveChanges()">Sačuvaj promene</button>
+            <button (click)="CloseEditModal()">Zatvori</button>
+        </div>
+        <div>
+            <img [src]="'data:image/jpeg;base64,' + recipe.pictureBase64 " alt="Recipe Picture">
+            <p>Име рецепта: {{recipe.name}}</p>
+            <p>Опис: {{recipe.description}}</p>
+            <p>Време припреме: {{recipe.duration}} минута</p>
+            <p>Број особа: {{recipe.numberOfPeople}}</p>
+            <p>Тежина припреме: {{recipe.difficulty}}</p>
+            <p>Savet kuvara: {{recipe.chefsAdvice}}</p>
+            <p>Промовисан: {{recipe.isPromoted}}</p>
+            <p>Datum kreiranja: {{recipe.creationDate}}</p>
+    </div>
+    <div>
+        <p>Састојци</p>
+        <div *ngFor="let ingredient of recipe.ingredients">
+            <p>{{ingredient.name}} - {{ingredient.amount}} {{ingredient.unit}}</p>
+        </div>
+    </div>
+    <div>
+        <p>Кораци</p>
+        <div *ngFor="let step of recipe.steps">
+            <p>{{step.orderNumber}}. {{step.description}}</p>
+        </div>
+    </div>
+    <div>
+        <p>Tagovi</p>
+        <div *ngFor="let tag of recipe.tags">
+            <p>{{tag.name}}</p>
+        </div>
+    </div>
+</div>

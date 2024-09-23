@@ -21,5 +21,11 @@ namespace Kulinarka.Services
                 return Response<Title>.Success(null, StatusCode.NotFound);
             return result;
         }
+        public async Task<Response<Title>> GetNextTitleAndRewardsEagerAsync(int currentTitleId)
+        {
+            int nextId = Title.GetNextTitleId(currentTitleId);
+            var result = await titleRepository.GetNextTitleAndRewardsEagerAsync(nextId);
+            return result;
+        }
     }
 }

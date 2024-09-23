@@ -8,7 +8,7 @@ namespace Kulinarka.Models
         [Key]
         public int UserId { get; set; }
         public int Followers { get; set; }
-        public float AverageRating { get; set; }
+        public double AverageRating { get; set; }
         public int Likes { get; set; }
         public int Favorites { get; set; }
         [JsonIgnore]

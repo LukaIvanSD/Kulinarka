@@ -101,5 +101,18 @@ namespace Kulinarka.SqlDbRepository
                 return Response<Recipe>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }
+
+        public async Task<Response<int>> CountUserRecipes(int userId)
+        {
+            try
+            {
+                int count = dbSet.Count(r => r.UserId == userId);
+                return Response<int>.Success(count, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<int>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
     }
 }

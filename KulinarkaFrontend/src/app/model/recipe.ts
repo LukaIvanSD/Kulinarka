@@ -34,6 +34,7 @@ export interface PreparationStep{
 export interface Tag{
     id:number;
     recipeId:number;
+    tagType:string;
     name:string;
 }
 export interface RecipeDetails{

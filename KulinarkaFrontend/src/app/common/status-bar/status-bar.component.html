@@ -9,6 +9,7 @@
     </div>
     <div>
         <div *ngIf="showStatusBar" class="functions">
+        <button *ngIf="user!==null" (click)="MyRecipes()">Моји рецепти</button>
         <button *ngIf="user!==null" (click)="AddRecipe()">Додај рецепт</button>
         <button *ngIf="user===null" (click)="Login()">Пријави се</button>
         <button *ngIf="user!==null" (click)="Logout()">Одјави се</button>

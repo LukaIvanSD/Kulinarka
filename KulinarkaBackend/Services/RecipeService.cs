@@ -1,10 +1,12 @@
-﻿using Kulinarka.DTO;
+﻿using AutoMapper;
+using Kulinarka.DTO;
 using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
 using Kulinarka.ServiceInterfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -13,9 +15,15 @@ namespace Kulinarka.Services
     public class RecipeService : IRecipeService
     {
         private readonly IRecipeRepository recipeRepository;
-        public RecipeService(IRecipeRepository recipeRepository)
+        private readonly IMapper mapper;
+        private readonly IRecipeIngredientService recipeIngredientService;
+        private readonly IRecipeTagService recipeTagService;
+        public RecipeService(IRecipeRepository recipeRepository,IMapper mapper, IRecipeIngredientService recipeIngredientService, IRecipeTagService recipeTagService)
         {
+            this.recipeIngredientService = recipeIngredientService;
             this.recipeRepository = recipeRepository;
+            this.mapper = mapper;
+            this.recipeTagService = recipeTagService;
         }
         public async Task<Response<List<Recipe>>> GetAllAsync()
         {
@@ -78,14 +86,33 @@ namespace Kulinarka.Services
             return Task.FromResult(recipes.OrderByDescending(r => r.DatePromoted()).ToList());
         }
 
-        public async Task<Response<List<SortedRecipesDTO>>> GetUserRecipesAsync(User user)
+        public async Task<Response<List<UserRecipeDTO>>> GetUserRecipesAsync(User user)
         {
             var result = await GetUserRecipesWithPromotionsEagerAsync(user);
             if (!result.IsSuccess)
-                return Response<List<SortedRecipesDTO>>.Failure(result.ErrorMessage, result.StatusCode);
-            List<Recipe> sortedRecipes = SortRecipes(result.Data).Result;
-            List<SortedRecipesDTO> sortedRecipesDTO = CreateSortedRecipesDTO(sortedRecipes);
-            return Response<List<SortedRecipesDTO>>.Success(sortedRecipesDTO, StatusCode.OK);
+                return Response<List<UserRecipeDTO>>.Failure(result.ErrorMessage, result.StatusCode);
+            List<Recipe> userRecipes = result.Data;
+            List<UserRecipeDTO> userRecipeDTO = new List<UserRecipeDTO>();
+            foreach (Recipe userRecipe in userRecipes)
+            {
+                var ingredientsResult = await recipeIngredientService.GetRecipeIngredientsAsync(userRecipe.Id);
+                if (!ingredientsResult.IsSuccess)
+                    return Response<List<UserRecipeDTO>>.Failure(ingredientsResult.ErrorMessage, ingredientsResult.StatusCode);
+                if (ingredientsResult.Data == null)
+                    return Response<List<UserRecipeDTO>>.Failure("No ingredients found", StatusCode.BadRequest);
+                userRecipe.Ingredients = ingredientsResult.Data;
+                var tagsResult = await recipeTagService.GetByRecipeIdAsync(userRecipe.Id);
+                if (!tagsResult.IsSuccess)
+                    return Response<List<UserRecipeDTO>>.Failure(tagsResult.ErrorMessage, tagsResult.StatusCode);
+                if (tagsResult.Data == null)
+                    return Response<List<UserRecipeDTO>>.Failure("No tags found", StatusCode.BadRequest);
+                userRecipe.Tags = tagsResult.Data;
+                userRecipeDTO.Add(mapper.Map<UserRecipeDTO>(userRecipe, opt => {
+                    opt.Items["IsPromoted"] = userRecipe.IsPromoted();
+                }));
+            }
+            
+            return Response<List<UserRecipeDTO>>.Success(userRecipeDTO, StatusCode.OK);
         }
 
         public async Task<Response<List<Recipe>>> GetUserRecipesWithPromotionsEagerAsync(User user)
@@ -126,6 +153,11 @@ namespace Kulinarka.Services
         public async Task<Response<Recipe>> UpdateWithDetailsAsync(User user, Recipe recipe)
         {
             return await UpdateAsync(user, recipe);
+        }
+
+        public async Task<Response<int>> CountUserRecipes(int userId)
+        {
+            return await recipeRepository.CountUserRecipes(userId);
         }
     }
 }

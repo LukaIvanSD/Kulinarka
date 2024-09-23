@@ -8,6 +8,7 @@ namespace Kulinarka.ServiceInterfaces
     {
         Task<Response<List<UserAchievement>>> CreateUserAchievements(User user);
         Task<Response<Achievement>> CreateUsersAchievement(Achievement achievements);
+        Task<Response<int>> GetCompletedAchievementsNumber(int userId);
         Task<Response<List<UserAchievement>>> GetUserAchievementsEagerAsync(int userId);
     }
 }

@@ -22,5 +22,6 @@ namespace Kulinarka.Models
             TagType = tagType;
             Name = name;
         }
+        public Tag() { }
     }
 }

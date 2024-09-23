@@ -26,7 +26,6 @@ export class StatusBarComponent implements OnInit,DoCheck {
     this.userService.user$.subscribe(user => {
       this.user = user;
     });
-    console.log('User:', this.user); 
     this.checkSessionInterval = interval(10 * 60 * 1001)
     .subscribe(() => this.GetSession());
   }
@@ -47,6 +46,7 @@ export class StatusBarComponent implements OnInit,DoCheck {
     return this.sessionService.Logout().subscribe(
       (data:any)=>{
         this.userService.clearUser();
+        this.router.navigate(['/']);
       }
     );
   }
@@ -77,5 +77,8 @@ export class StatusBarComponent implements OnInit,DoCheck {
   }
   AddRecipe(){
     this.router.navigate(['/addRecipe']);
+  }
+  MyRecipes(){
+    this.router.navigate(['/myRecipes'])
   }
 }

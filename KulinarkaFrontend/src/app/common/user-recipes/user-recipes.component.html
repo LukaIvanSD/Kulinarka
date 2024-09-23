@@ -1,0 +1,48 @@
+<div>
+    <input type="text" [(ngModel)]="searchText" (ngModelChange)="ShowSearched()" placeholder="Search your recipes">
+    <ul *ngIf="suggestions.length > 0">
+        <li *ngFor="let suggestion of suggestions" (click)="SelectSuggestion(suggestion)">
+          {{ suggestion }}
+        </li>
+      </ul>
+      <select (change)="SortRecipes($event)">
+        <option value="Promotion">По промоцији</option>
+        <option value="Date">По датуму</option>
+        <option value="Alphabet">По азбучном реду</option>
+        <option value="Duration">По дужини спремања</option>
+        <option value="People">По броју особа</option>
+        <option value="Difficulty">По тежини припреме</option>
+       </select>
+       <button (click)="Reverse()"> Супротно </button>
+       <div>
+        <p>Доба дана</p>
+        <div *ngFor="let mealTime of mealTimes">
+        <input type="checkbox" (change)="OnCheckboxChange('MealTime',mealTime, $event)"> {{mealTime}}
+        </div>
+        </div>
+        <div>
+            <p>Начин спремања</p>
+            <div *ngFor="let preparationMethod of preparationMethods">
+            <input type="checkbox" (change)="OnCheckboxChange('PreparationMethod',preparationMethod, $event)"> {{preparationMethod}}
+            </div>
+            </div>
+            <div>
+                <p>Укус</p>
+                <div *ngFor="let flavor of flavors">
+                <input type="checkbox" (change)="OnCheckboxChange('Flavor',flavor, $event)"> {{flavor}}
+                </div>
+                </div>
+<div class="recipes-container">
+    <div  *ngFor="let recipe of recipesToShow" class="recipe-card">
+        <div class="card">
+            <img [src]="'data:image/jpeg;base64,' + recipe.recipe.pictureBase64 " alt="Recipe Picture">
+            <p>{{recipe.recipe.name}}</p>
+        </div>
+        <button (click)="ShowDeleteModal(recipe)">Обриши</button>
+        <button *ngIf="canPromote===true && recipe.isPromoted!==true" (click)="PromoteRecipe(recipe)">Промовиши </button>
+        <button> Измени </button>
+        <p *ngIf="recipe.isPromoted">Рецепт је промовисан</p>
+        </div>
+    </div>
+</div>
+<app-delete-modal *ngIf="showDeleteModal===true" [recipe]="selectedRecipe?.recipe" (closeModal)="HandleCloseModal()" (deleteRecipe)="HandleDeleteRecipe($event)"/>
