@@ -13,5 +13,6 @@ namespace Kulinarka.RepositoryInterfaces
         Task<Response<List<Recipe>>> GetRecipesAndPromotionsAndOwnerEagerAsync();
         Task<Response<List<Recipe>>> GetUserRecipesWithPromotionsEagerAsync(int userId);
         Task<Response<Recipe>> GetRecipeDetailsEagerAsync(int id);
+        Task<Response<int>> CountUserRecipes(int userId);
     }
 }

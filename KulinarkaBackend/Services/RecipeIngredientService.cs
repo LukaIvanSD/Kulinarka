@@ -32,6 +32,11 @@ namespace Kulinarka.Services
             return Response<List<RecipeIngredient>>.Success(recipeIngredients, StatusCode.Created);
         }
 
+        public async Task<Response<List<RecipeIngredient>>> GetRecipeIngredientsAsync(int recipeId)
+        {
+            return await recipeIngredientRepository.GetByRecipeIdEagerAsync(recipeId);
+        }
+
         private RecipeIngredient GenerateRecipeIngredient(int recipeId,int ingredientId, RecipeIngredientDTO recipeIngredientDTO)
         {
             return new RecipeIngredient(recipeId, ingredientId, recipeIngredientDTO.Amount, recipeIngredientDTO.MeasurementUnit);

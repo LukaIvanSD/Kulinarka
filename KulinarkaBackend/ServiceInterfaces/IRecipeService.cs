@@ -13,12 +13,13 @@ namespace Kulinarka.Interfaces
         Task<Response<Recipe>> UpdateAsync(User user, Recipe recipe);
         Task<Response<Recipe>> DeleteAsync(User user, int id);
         Task<Response<List<SortedRecipesDTO>>> GetSortedAsync();
-        Task<Response<List<SortedRecipesDTO>>> GetUserRecipesAsync(User user);
+        Task<Response<List<UserRecipeDTO>>> GetUserRecipesAsync(User user);
         Task<Response<List<Recipe>>> GetUserRecipesWithPromotionsEagerAsync(User user);
         Task<Response<Recipe>> BeginTransactionAsync();
         Task<Response<Recipe>> CommitTransactionAsync();
         Task<Response<Recipe>> RollbackTransactionAsync();
         Task<Response<Recipe>> SaveChangesAsync();
         Task<Response<Recipe>> UpdateWithDetailsAsync(User user, Recipe recipe);
+        Task<Response<int>> CountUserRecipes(int userId);
     }
 }

@@ -73,6 +73,16 @@ namespace Kulinarka.Models
             }
             return achievementsJustCompleted;
         }
+        public PromotionReward GetTitleRewards() 
+        { 
+            return UserTitle.CurrentTitle.PromotionReward;
+        }
+        public PromotionReward GetNextTitleRewards()
+        {
+            if(UserTitle.NextTitle!=null)
+                return UserTitle.NextTitle.PromotionReward;
+            return null;
+        }
 
         internal bool CanPromote(int recipeId)
         {

@@ -28,6 +28,12 @@ namespace Kulinarka.Services
             }
             return Response<List<RecipeTag>>.Success(recipeTags, StatusCode.Created);
         }
+
+        public async Task<Response<List<RecipeTag>>> GetByRecipeIdAsync(int recipeId)
+        {
+            return await recipeTagRepository.GetByRecipeIdEagerAsync(recipeId);
+        }
+
         private async void SaveTag(RecipeTag recipeTag)
         {
             await recipeTagRepository.CreateAsync(recipeTag,false);

@@ -1,1 +1,87 @@
-<p>profile works!</p>
+<div>
+    <label>Име:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.firstName" />
+    <label>Презиме:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.lastName" />
+    <label>Пол:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.gender" />
+    <label>Датум рођења:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.birthday   " />
+    <label>Локација:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.location" />
+    <label>Е-mail:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.email" />
+    <label>Корисничко име:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.username" />
+    <label>Биографија:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.bio" />
+    <label>Датум креирања:</label>
+    <input type="text" [(ngModel)]="profile.userInfo.dateOfCreation" />
+    <label>Слика:</label>
+    <img class="profilePicture" [src]="profilePicture" alt="Profile Picture"/>
+    <button >Измени податке</button>
+    <button >Измени лозинку</button>
+    <label>Статистика:</label>
+    <label>Лајкови:</label>
+    <label>{{profile.userStatistics.numberOfLikes}}</label>
+    <label>Пратиоци:</label>
+    <label>{{profile.userStatistics.numberOfFollowers}}</label>
+    <label>Просечна оцена:</label>
+    <label>{{profile.userStatistics.averageRating}}</label>
+    <label>Број објављених рецепта:</label>
+    <label>{{profile.userStatistics.numberOfRecipes}}</label>
+    <label>Омиљени рецепти:</label>
+    <label>{{profile.userStatistics.numberOfFavorites}}</label>
+
+    <label>Титула</label>
+    <label>Назив:</label>
+    <label>{{profile.title.name}}</label>
+    <label>Датум освајања:</label>
+    <label>{{profile.title.aquiredDate}}</label>
+    <label>Број трофеја:</label>
+    <label>{{profile.title.numberOfCompletedAchievements}}</label>
+    <label>Следећа титула:</label>
+    <label>{{profile.title.nextTitleName}}</label>
+    <label>Минимални број трофеја:</label>
+    <label>{{profile.title.currentTitleRequirement}}</label>
+    <label>Потребан број трофеја:</label>
+    <label>{{profile.title.nextTitleRequirement}}</label>
+
+    <label>Тренутне награде:</label>
+    <label>Број дозвољених промоција:</label>
+    <label>{{profile.currentPromotionReward.postsToPromote}}</label>
+    <label>Дужина трајања промоције:</label>
+    <label>{{profile.currentPromotionReward.durationInDays}}</label>
+    <label>Интервал ресета:</label>
+    <label>{{profile.currentPromotionReward.intervalInDays}}</label>
+    <label>Следеће награде:</label>
+    <label>Број дозвољених промоција:</label>
+    <label>{{profile.nextPromotionReward.postsToPromote}}</label>
+    <label>Дужина трајања промоције:</label>
+    <label>{{profile.nextPromotionReward.durationInDays}}</label>
+    <label>Интервал ресета:</label>
+    <label>{{profile.nextPromotionReward.intervalInDays}}</label>
+    <button (click)="ShowAchievements()">Трофеји</button>
+    <div *ngIf="showAchievements===true">
+        <div *ngFor="let userAchievement of userAchievements;let i=index">
+            <p>{{i+1}}</p>
+            <label>Трофеј:</label>
+            <p>{{userAchievement.achievement.name}}</p>
+            <label>Опис:</label>
+            <p>{{userAchievement.achievement.description}}</p>
+            <label>Датум освајања:</label>
+            <p>{{userAchievement.aquiredDate}}</p>
+            <label>Скупљени поени:</label>
+            <p>{{userAchievement.pointsCollected}}</p>
+            <label>Потребни поени:</label>
+            <p>{{userAchievement.achievement.pointsNeeded}}</p>
+            <label>Иконица:</label>
+            <img [src]="'data:image/jpeg;base64,'+userAchievement.achievement.iconBase64" alt="Achievement Icon"/>
+            <label>Тип задатка:</label>
+            <p>{{userAchievement.achievement.requirementType}}</p>  
+            </div>
+        </div>
+
+
+
+</div>

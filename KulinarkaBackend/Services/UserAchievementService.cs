@@ -66,5 +66,10 @@ namespace Kulinarka.Services
             }
             return Response<List<UserAchievement>>.Success(userAchievements, StatusCode.OK);
         }
+
+        public async Task<Response<int>> GetCompletedAchievementsNumber(int userId)
+        {
+            return await userAchievementRepository.GetCompletedAchievementsNumber(userId);
+        }
     }
 }

@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins",
        policy =>
        {
-           policy.WithOrigins("http://localhost:4200")
+           policy.WithOrigins("http://localhost:4200","http://192.168.0.4:4200")
                  .AllowAnyMethod()
                  .AllowAnyHeader()
                  .AllowCredentials();
@@ -80,7 +80,7 @@ builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 builder.Services.AddScoped<IRecipeTagRepository, RecipeTagRepository>();
 builder.Services.AddScoped<PostRecipeService> ();
-
+builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<Func<IAchievementService>>(provider => () => provider.GetService<IAchievementService>());
 builder.Services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>());
 

@@ -7,5 +7,6 @@ namespace Kulinarka.ServiceInterfaces
     public interface IRecipeIngredientService
     {
         Task<Response<List<RecipeIngredient>>> AddAsync(int recipeId, List<RecipeIngredientDTO> recipeIngredientDTOs);
+        Task<Response<List<RecipeIngredient>>> GetRecipeIngredientsAsync(int recipeId);
     }
 }

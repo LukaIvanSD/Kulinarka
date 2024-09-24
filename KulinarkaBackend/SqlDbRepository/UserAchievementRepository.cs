@@ -85,5 +85,18 @@ namespace Kulinarka.SqlDbRepository
                 return Response<UserAchievement>.Failure(ex.Message, StatusCode.InternalServerError);
             }
         }
+
+        public async Task<Response<int>> GetCompletedAchievementsNumber(int userId)
+        {
+            try
+            {
+                var completedAchievementsNumber = await dbSet.Where(ua => ua.UserId == userId && ua.IsCompleted()).CountAsync();
+                return Response<int>.Success(completedAchievementsNumber, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<int>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
     }
 }

@@ -50,6 +50,19 @@ namespace Kulinarka.SqlDbRepository
             throw new NotImplementedException();
         }
 
+        public async Task<Response<Title>> GetNextTitleAndRewardsEagerAsync(int nextId)
+        {
+            try 
+            { 
+                var title = await dbSet.Include(t => t.PromotionReward).FirstOrDefaultAsync(t => t.Id == nextId);
+                return Response<Title>.Success(title,StatusCode.OK);
+            }
+            catch (Exception e)
+            {
+                return Response<Title>.Failure(e.Message, StatusCode.InternalServerError);
+            }
+        }
+
         public async Task<Response<Title>> RollbackTransactionAsync()
         {
             return await repository.RollbackTransactionAsync();
