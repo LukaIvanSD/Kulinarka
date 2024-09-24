@@ -10,6 +10,9 @@ namespace Kulinarka.Profiles
         {
             CreateMap<User, UserInfoDTO>()
                 .ForMember(dest => dest.PictureBase64, opt => opt.MapFrom(src => Convert.ToBase64String(src.Picture)));
+            CreateMap<UserInfoDTO, User>()
+                .ForMember(dest => dest.Picture, opt => opt.Ignore())
+                .ForMember(dest =>dest.Id,opt=>opt.Ignore());
             CreateMap<User,UserStatisticDTO>()
                 .ForMember(dest => dest.NumberOfFollowers, opt => opt.MapFrom(src => src.UserStatistic.Followers))
                 .ForMember(dest => dest.NumberOfLikes, opt => opt.MapFrom(src => src.UserStatistic.Likes))

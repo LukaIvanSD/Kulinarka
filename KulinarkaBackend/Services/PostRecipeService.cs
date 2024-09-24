@@ -31,17 +31,17 @@ namespace Kulinarka.Services
                     throw new Exception(recipeResult.ErrorMessage);
                 Recipe newRecipe = recipeResult.Data;
 
-                var recipeIngredientResult = await recipeIngredientService.AddAsync(newRecipe.Id,recipeDTO.RecipeIngredientDTOs);
+                var recipeIngredientResult = await recipeIngredientService.AddAsync(newRecipe.Id,recipeDTO.RecipeIngredientDTOs,false);
                 if(!recipeIngredientResult.IsSuccess)
                     throw new Exception(recipeIngredientResult.ErrorMessage);
                 newRecipe.Ingredients = recipeIngredientResult.Data;
 
-                var recipeTagResult = await recipeTagService.AddAsync(newRecipe.Id, recipeDTO.Tags);
+                var recipeTagResult = await recipeTagService.AddAsync(newRecipe.Id, recipeDTO.Tags,false);
                 if (!recipeTagResult.IsSuccess)
                     throw new Exception(recipeTagResult.ErrorMessage);
                 newRecipe.Tags = recipeTagResult.Data;
 
-                var preparationStepResult = await preparationStepService.AddAsync(newRecipe.Id, recipeDTO.PreparationSteps);
+                var preparationStepResult = await preparationStepService.AddAsync(newRecipe.Id, recipeDTO.PreparationSteps,false);
                 if (!preparationStepResult.IsSuccess)
                     throw new Exception(preparationStepResult.ErrorMessage);
                 newRecipe.PreparationSteps = preparationStepResult.Data;

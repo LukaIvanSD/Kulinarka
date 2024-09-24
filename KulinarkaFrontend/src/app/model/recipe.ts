@@ -37,9 +37,3 @@ export interface Tag{
     tagType:string;
     name:string;
 }
-export interface RecipeDetails{
-    recipe:Recipe;
-    ingredients:Ingredient[];
-    PreparationSteps:PreparationStep[];
-    tags:Tag[];
-}

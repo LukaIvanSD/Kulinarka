@@ -4,6 +4,7 @@ using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.ServiceInterfaces;
+using Kulinarka.SqlDbRepository;
 
 namespace Kulinarka.Services
 {
@@ -47,6 +48,42 @@ namespace Kulinarka.Services
 
             ProfileDTO profileDTO = new ProfileDTO(userInfoDTO,titleDTO, userStatisticDTO,currentReward,nextReward);
             return  Response<ProfileDTO>.Success(profileDTO,StatusCode.OK);
+        }
+        public async Task<Response<User>> UpdateUserInfoAsync(User user, UserInfoDTO newUserInfo)
+        {
+            if (HasChangedUsernameOrPassword(user, newUserInfo))
+            {
+                mapper.Map(newUserInfo, user);
+                if (!(await userService.IsUserUnique(user)).IsSuccess)
+                    return Response<User>.Failure("Username or email already exists", StatusCode.BadRequest);
+                return await userService.UpdateAsync(user);
+            }
+            else
+            {
+                mapper.Map(newUserInfo, user);
+                return await userService.UpdateAsync(user);
+            }
+        }
+        private bool HasChangedUsernameOrPassword(User user, UserInfoDTO newUserInfo)
+        {
+            return user.Username != newUserInfo.Username || user.Email != newUserInfo.Email;
+        }
+        public async Task<Response<User>> UpdatePasswordAsync(User user, PasswordChangeRequst passwordChangeRequst)
+        {
+            var passwordResult = await userService.CheckPassword(user,passwordChangeRequst.OldPassword);
+            if (!passwordResult.IsSuccess)
+                return Response<User>.Failure(passwordResult.ErrorMessage,passwordResult.StatusCode);
+            user.Password = passwordChangeRequst.NewPassword;
+            return await userService.UpdateAsync(user);
+        }
+
+        public async Task<Response<string>> UpdatePictureAsync(User user, byte[] pictureBytes)
+        {
+            user.Picture = pictureBytes;
+            var userResult= await userService.UpdateAsync(user);
+            if(!userResult.IsSuccess)
+                return Response<string>.Failure(userResult.ErrorMessage, userResult.StatusCode);
+            return Response<string>.Success(Convert.ToBase64String(pictureBytes), StatusCode.OK);
         }
     }
 }

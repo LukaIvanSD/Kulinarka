@@ -24,13 +24,13 @@ namespace Kulinarka.Controllers
             this.mapper = mapper;
             this.userManagementService = userManagementService;
         }
-        [HttpPatch("/addProgress")]
+        [HttpPatch("addProgress")]
         public async Task<IActionResult> AddProgress([FromBody] UpdateUserAchievementRequest request)
         {
              var result = await userManagementService.AddProgress(request.userId,request.requirementType);
              return HandleResponse(result);
         }
-        [HttpPatch("/removeProgress")]
+        [HttpPatch("removeProgress")]
         public async Task<IActionResult> RemoveProgress([FromBody] UpdateUserAchievementRequest request)
         {
             var result = await userManagementService.RemoveProgress(request.userId,request.requirementType);

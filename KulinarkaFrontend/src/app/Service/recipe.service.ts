@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Recipe, RecipesHome } from '../model/recipe';
-import { RecipeDetails } from '../model/recipe';
+import { RecipeDetails } from '../model/recipeDetails';
 import { Observable } from 'rxjs';
 import { UserRecipe } from '../model/userRecipe';
 
@@ -14,9 +14,6 @@ export class RecipeService {
   GetSortedRecipes() {
      return this.http.get<RecipesHome[]>('https://localhost:7289/Recipes/sorted');
   }
-  GetRecipeById(id:number){
-    return this.http.get<RecipeDetails>('https://localhost:7289/Recipes/'+id);
-  }
   AddRecipe(recipeForm:FormData){
     return this.http.post('https://localhost:7289/Recipes',recipeForm,{withCredentials:true});
   }
@@ -28,5 +25,15 @@ export class RecipeService {
   }
   PromoteRecipe(recipeId:number){
     return this.http.post( 'https://localhost:7289/PromotionRewardRecipe/'+recipeId, {}, { withCredentials: true });
+  }
+  GetRecipeDetails(recipeId:number):Observable<RecipeDetails>{
+    return this.http.get<RecipeDetails>("https://localhost:7289/RecipeDetails/"+recipeId);
+  }
+  IsUserOwnerOfRecipe(recipeId:number):Observable<boolean>{
+    return this.http.get<boolean>("https://localhost:7289/Recipes/IsUserOwnerOfRecipe/"+recipeId,{withCredentials:true});
+  }
+  UpdateRecipe(recipeDetails:RecipeDetails){
+    console.log(recipeDetails);
+    return this.http.patch('https://localhost:7289/RecipeDetails/',recipeDetails,{withCredentials:true});
   }
 }

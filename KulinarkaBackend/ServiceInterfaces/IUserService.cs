@@ -1,4 +1,5 @@
-﻿using Kulinarka.Models;
+﻿using Kulinarka.DTO;
+using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 
 namespace Kulinarka.Interfaces
@@ -18,5 +19,8 @@ namespace Kulinarka.Interfaces
         Task<Response<User>> RollbackTransactionAsync();
         Task<Response<User>> UpdateAsync(User user, bool saveChanges=true);
         Task<Response<User>> GetUserTitleAndStatisticAndRewardsEagerAsync(int userId);
+        Task<Response<User>> GetUserAndTitleEagerAsync(int userId);
+        Task<Response<User>> IsUserUnique(User user);
+        Task<Response<bool>> CheckPassword(User user, string oldPassword);
     }
 }

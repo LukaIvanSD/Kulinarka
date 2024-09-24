@@ -82,7 +82,7 @@ namespace Kulinarka.Controllers
             if (!loginResult.IsSuccess)
                 return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
             Recipe recipe = mapper.Map<Recipe>(recipeDTO);
-            var result = await recipeService.UpdateWithDetailsAsync(loginResult.Data, recipe);
+            var result = await recipeService.UpdateAsync(loginResult.Data, recipe);
             return HandleResponse(result);
         }
         [HttpDelete("{id}")]
@@ -107,6 +107,15 @@ namespace Kulinarka.Controllers
             if (!loginResult.IsSuccess)
                 return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
             var result = await recipeService.GetUserRecipesAsync(loginResult.Data);
+            return HandleResponse(result);
+        }
+        [HttpGet("IsUserOwnerOfRecipe/{recipeid}")]
+        public async Task<IActionResult> IsUserOwnerOfRecipe(int recipeid)
+        {
+            var loginResult = await loginService.GetSessionAsync();
+            if (!loginResult.IsSuccess)
+                return StatusCode((int)loginResult.StatusCode, loginResult.ErrorMessage);
+            var result = await recipeService.IsUserOwnerOfRecipe(loginResult.Data,recipeid);
             return HandleResponse(result);
         }
 

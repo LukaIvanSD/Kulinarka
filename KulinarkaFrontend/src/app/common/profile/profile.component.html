@@ -1,26 +1,42 @@
 <div>
     <label>Име:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.firstName" />
+    <input type="text" [(ngModel)]="profile.userInfo.firstName" [disabled]="!isEditing"/>
     <label>Презиме:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.lastName" />
+    <input type="text" [(ngModel)]="profile.userInfo.lastName" [disabled]="!isEditing"/>
     <label>Пол:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.gender" />
+    <input type="text" [(ngModel)]="profile.userInfo.gender" [disabled]="!isEditing"/>
     <label>Датум рођења:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.birthday   " />
+    <input type="text" [(ngModel)]="profile.userInfo.birthday" [disabled]="!isEditing"/>
     <label>Локација:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.location" />
+    <input type="text" [(ngModel)]="profile.userInfo.location" [disabled]="!isEditing"/>
     <label>Е-mail:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.email" />
+    <input type="text" [(ngModel)]="profile.userInfo.email" [disabled]="!isEditing"/>
     <label>Корисничко име:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.username" />
+    <input type="text" [(ngModel)]="profile.userInfo.username" [disabled]="!isEditing"/>
     <label>Биографија:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.bio" />
+    <input type="text" [(ngModel)]="profile.userInfo.bio" [disabled]="!isEditing"/>
     <label>Датум креирања:</label>
-    <input type="text" [(ngModel)]="profile.userInfo.dateOfCreation" />
+    <input type="text" [(ngModel)]="profile.userInfo.dateOfCreation" [disabled]="!isEditing"/>
+    <button (click)="SaveInfoChanges()" *ngIf="isEditing">Сачувај промене</button>
+    <button (click)="CancelEditInfo()" *ngIf="isEditing" >Откажи</button>
+    <div *ngIf="isChangingPassword">
+    <label>Стара лозинка:</label>
+    <input type="password" [(ngModel)]="oldPassword" *ngIf="isChangingPassword"/>
+    <label>Нова лозинка:</label>
+    <input type="password" [(ngModel)]="newPassword" *ngIf="isChangingPassword"/>
+    <label>Потврда нове лозинке:</label>
+    <input type="password" [(ngModel)]="confirmPassword" *ngIf="isChangingPassword"/>
+    <button (click)="SavePasswordChanges()" *ngIf="isChangingPassword">Сачувај промене</button>
+    <button (click)="CancelChangePassword()" *ngIf="isChangingPassword">Откажи</button>
+    </div>
     <label>Слика:</label>
-    <img class="profilePicture" [src]="profilePicture" alt="Profile Picture"/>
-    <button >Измени податке</button>
-    <button >Измени лозинку</button>
+    <img class="profilePicture" [src]="profilePicture" alt="Profile Picture" />
+    <input type="file" (change)="UploadPicture($event)" *ngIf="isChangingPicture"/>
+    <button (click)="SavePictureChanges()" *ngIf="isChangingPicture">Сачувај промене</button>
+    <button (click)="CancelChangePicture()" *ngIf="isChangingPicture">Откажи</button>
+    <button  *ngIf="!isEditing" (click)="ChangeUserInfo()">Измени податке</button>
+    <button (click)="ChangePassword()" *ngIf="!isChangingPassword">Измени лозинку</button>
+    <button (click)="ChangePicture()" *ngIf="!isChangingPicture">Измени слику</button>
     <label>Статистика:</label>
     <label>Лајкови:</label>
     <label>{{profile.userStatistics.numberOfLikes}}</label>
