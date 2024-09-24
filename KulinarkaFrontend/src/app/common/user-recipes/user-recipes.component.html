@@ -33,8 +33,8 @@
                 </div>
                 </div>
 <div class="recipes-container">
-    <div  *ngFor="let recipe of recipesToShow" class="recipe-card">
-        <div class="card">
+    <div  *ngFor="let recipe of recipesToShow" class="recipe-card" >
+        <div class="card" (click)="ShowRecipeDetails(recipe.recipe.id)">
             <img [src]="'data:image/jpeg;base64,' + recipe.recipe.pictureBase64 " alt="Recipe Picture">
             <p>{{recipe.recipe.name}}</p>
         </div>

@@ -1,4 +1,6 @@
-﻿using Kulinarka.Interfaces;
+﻿using AutoMapper;
+using Kulinarka.DTO;
+using Kulinarka.Interfaces;
 using Kulinarka.Models;
 using Kulinarka.Models.Responses;
 using Kulinarka.RepositoryInterfaces;
@@ -13,11 +15,13 @@ namespace Kulinarka.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IUserAchievementService userAchievementServiceFactory;
+        private readonly IMapper mapper;
 
-        public UserService(IUserRepository userRepository, IUserAchievementService userAchievementServiceFactory)
+        public UserService(IUserRepository userRepository, IUserAchievementService userAchievementServiceFactory,IMapper mapper)
         {
             this.userRepository = userRepository;
             this.userAchievementServiceFactory = userAchievementServiceFactory;
+            this.mapper = mapper;
         }
         public async Task<Response<User>> DeleteUserAsync(int id)
         {
@@ -92,14 +96,36 @@ namespace Kulinarka.Services
             return await userRepository.SaveChangesAsync();
         }
 
-        public Task<Response<User>> UpdateAsync(User user, bool saveChanges = true)
+        public async Task<Response<User>> UpdateAsync(User user, bool saveChanges = true)
         {
-            return userRepository.UpdateAsync(user.Id,user, saveChanges);
+            return await userRepository.UpdateAsync(user.Id,user, saveChanges);
         }
 
-        public Task<Response<User>> GetUserTitleAndStatisticAndRewardsEagerAsync(int userId)
+        public async Task<Response<User>> GetUserTitleAndStatisticAndRewardsEagerAsync(int userId)
         {
-            return userRepository.GetUserTitleAndStatisticAndRewardsEagerAsync(userId);
+            return  await userRepository.GetUserTitleAndStatisticAndRewardsEagerAsync(userId);
+        }
+
+        public async Task<Response<User>> GetUserAndTitleEagerAsync(int userId)
+        {
+            return await userRepository.GetUserAndTitleEagerAsync(userId);
+        }
+
+        public async Task<Response<User>> IsUserUnique(User user)
+        {
+            if (!await userRepository.IsUserUnique(user))
+                return Response<User>.Failure("Username or email already exists", StatusCode.BadRequest);
+            return Response<User>.Success(user, StatusCode.OK);
+        }
+
+        public async Task<Response<bool>> CheckPassword(User user, string oldPassword)
+        {
+            var userResult = await userRepository.GetByIdAsync(user.Id);
+            if (!userResult.IsSuccess)
+                return Response<bool>.Failure(userResult.ErrorMessage, userResult.StatusCode);
+            if (userResult.Data.Password != oldPassword)
+                return Response<bool>.Failure("Old password is incorrect", StatusCode.BadRequest);
+            return Response<bool>.Success(true, StatusCode.OK);
         }
     }
 }

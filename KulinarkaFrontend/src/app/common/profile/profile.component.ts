@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Profile } from '../../model/profile';
+import { Profile, UserInfo } from '../../model/profile';
 import { ProfileService } from '../../Service/profile.service';
 import { FormsModule } from '@angular/forms';
 import { UserAchievement } from '../../model/userAchievement';
 import { UserAchievementService } from '../../Service/user-achievement.service';
+import { User } from '../../model/user';
 
 @Component({
   selector: 'app-profile',
@@ -15,6 +16,7 @@ import { UserAchievementService } from '../../Service/user-achievement.service';
 })
 export class ProfileComponent implements OnInit{
   showAchievements = false;
+  userInfo: UserInfo ={} as UserInfo;
   userAchievements!: UserAchievement[];
   profile: Profile = {
     userInfo: {
@@ -55,13 +57,21 @@ export class ProfileComponent implements OnInit{
       intervalInDays: 0
     }
   };
+  isEditing=false;
+  isChangingPassword=false;
   profilePicture!: string;
+  oldPassword!: string;
+  newPassword!: string;
+  confirmPassword!: string;
+  isChangingPicture=false;
+  selectedPicture!: FormData;
   constructor(private profileService: ProfileService,private userAchievementService:UserAchievementService) {}
 
   ngOnInit(){
     this.profileService.GetProfile().subscribe({
       next: (data: Profile) => {
         this.profile = data;
+        this.userInfo = JSON.parse(JSON.stringify(data.userInfo));
         this.profilePicture = 'data:image/jpeg;base64,' + this.profile.userInfo.pictureBase64;
 
       },
@@ -84,4 +94,63 @@ export class ProfileComponent implements OnInit{
       });
     }
   }
+  ChangePicture(){
+    this.isChangingPicture = !this.isChangingPicture;
+  }
+  ChangeUserInfo(){
+    this.isEditing = !this.isEditing;
+  }
+  CancelEditInfo(){
+    this.profile.userInfo = JSON.parse(JSON.stringify(this.userInfo));
+    this.isEditing = !this.isEditing;
+  }
+  SaveInfoChanges(){
+    this.isEditing = !this.isEditing;
+    this.profileService.UpdateUserInfo(this.profile.userInfo).subscribe({
+      next: (data: User) => {
+        this.userInfo = JSON.parse(JSON.stringify(this.profile.userInfo));
+      },
+      error: (err) => {
+        console.error('Error updating user info:', err);
+      }
+    });
+  }
+  ChangePassword(){
+    this.isChangingPassword = !this.isChangingPassword;
+  }
+  SavePasswordChanges(){
+    this.isChangingPassword = !this.isChangingPassword;
+    this.profileService.ChangePassword(this.oldPassword,this.newPassword).subscribe({
+      next: (data: User) => {
+        console.log('Password changed');
+      },
+      error: (err) => {
+        console.error('Error changing password:', err);
+      }
+    });
+  }
+  CancelChangePassword(){
+    this.isChangingPassword = !this.isChangingPassword;
+  }
+  UploadPicture(event:Event)
+  {
+    this.selectedPicture=new FormData();
+    const files=(event.target as HTMLInputElement).files;
+    if(files && files.length>0){
+      this.selectedPicture.append('picture',files[0]);
+  }
+}
+SavePictureChanges(){
+  this.profileService.ChangePicture(this.selectedPicture).subscribe({
+    next: (data: string) => {
+      this.profile.userInfo.pictureBase64=data;
+      this.profilePicture='data:image/jpeg;base64,'+data;
+    },
+    error: (err) => {
+      console.error('Error uploading picture:', err);
+}});
+}
+CancelChangePicture(){
+  this.isChangingPicture = !this.isChangingPicture;
+}
 }

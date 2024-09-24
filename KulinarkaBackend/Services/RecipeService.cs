@@ -140,24 +140,34 @@ namespace Kulinarka.Services
         {
             return await recipeRepository.SaveChangesAsync();
         }
-        public async Task<Response<RecipeDTO>> GetByIdWithDetailsAsync(int id)
+        public async Task<Response<Recipe>> GetByIdWithDetailsAsync(int id)
         {
             var recipeResult = await recipeRepository.GetRecipeDetailsEagerAsync(id);
             if (!recipeResult.IsSuccess)
-                return Response<RecipeDTO>.Failure(recipeResult.ErrorMessage, recipeResult.StatusCode);
+                return Response<Recipe>.Failure(recipeResult.ErrorMessage, recipeResult.StatusCode);
             if (recipeResult.Data == null)
-                return Response<RecipeDTO>.Failure("Recipe not found", StatusCode.NotFound);
-            return Response<RecipeDTO>.Success(new RecipeDTO(recipeResult.Data), StatusCode.OK);
+                return Response<Recipe>.Failure("Recipe not found", StatusCode.NotFound);
+            return Response<Recipe>.Success(recipeResult.Data, StatusCode.OK);
         }
 
-        public async Task<Response<Recipe>> UpdateWithDetailsAsync(User user, Recipe recipe)
+        public async Task<Response<Recipe>> UpdateWithDetailsAsync(Recipe newRecipe,bool saveChanges=true)
         {
-            return await UpdateAsync(user, recipe);
+            return await recipeRepository.UpdateAsync(newRecipe.Id, newRecipe,saveChanges);
         }
 
         public async Task<Response<int>> CountUserRecipes(int userId)
         {
             return await recipeRepository.CountUserRecipes(userId);
+        }
+
+        public async Task<Response<bool>> IsUserOwnerOfRecipe(User user, int recipeid)
+        {
+            var result = await recipeRepository.GetByIdAsync(recipeid);
+            if (!result.IsSuccess)
+                return Response<bool>.Failure(result.ErrorMessage, result.StatusCode);
+            if (result.Data.UserId != user.Id)
+                return Response<bool>.Success(false, StatusCode.OK);
+            return Response<bool>.Success(true, StatusCode.OK);
         }
     }
 }

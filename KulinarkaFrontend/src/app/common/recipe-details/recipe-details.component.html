@@ -1,66 +1,140 @@
 <div>
+    <button (click)="UpdateRecipe()" *ngIf="hasUpdatedRecipe"> Сачувај промене </button>
+    <button (click)="CancelUpdateRecipe()" *ngIf="hasUpdatedRecipe"> Откажи </button>
     <div>
         <p>Informacije o vlasniku</p>
         <div>
             <img [src]="'data:image/jpeg;base64,' + recipe.owner.pictureBase64 " alt="Owner Picture">
             <p>Корисничко име: {{recipe.owner.username}}</p>
             <p>Datum kreiranja naloga: {{recipe.owner.dateOfCreation}}</p>
-            <p>Titula: {{recipe.owner.titleName}}</p>
+            <p>Titula: {{recipe.owner.title}}</p>
     </div>
     <div>
         <p>Информације о рецепту</p>
-        <button (click)="OpenEditModal()">Izmeni podatke o receptu</button>
-        <div *ngIf="isEditModalOpen" class="modal">
+        <button *ngIf="isUserOwnerOfRecipe" (click)="OpenEditRecipeInfoModal()">Izmeni podatke o receptu</button>
+        <div *ngIf="isEditRecipeModalOpen" class="modal">
             <h2>Izmeni recept</h2>
             <label>
                 Ime recepta:
-                <input [(ngModel)]="recipe.name" />
+                <input [(ngModel)]="recipe.recipe.name" />
             </label>
             <label>
                 Opiši:
-                <textarea [(ngModel)]="recipe.description"></textarea>
+                <textarea [(ngModel)]="recipe.recipe.description"></textarea>
             </label>
             <label>
                 Vreme pripreme:
-                <input type="number" [(ngModel)]="recipe.duration" /> minuta
+                <input type="text" [(ngModel)]="recipe.recipe.duration" /> minuta
             </label>
             <label>
                 Broj osoba:
-                <input type="number" [(ngModel)]="recipe.numberOfPeople" />
+                <input type="number" [(ngModel)]="recipe.recipe.numberOfPeople" />
             </label>
             <label>
                 Težina pripreme:
-                <input [(ngModel)]="recipe.difficulty" />
+                <input [(ngModel)]="recipe.recipe.difficulty" />
             </label>
             <label>
                 Savet kuvara:
-                <input [(ngModel)]="recipe.chefsAdvice" />
+                <input [(ngModel)]="recipe.recipe.chefsAdvice" />
             </label>
-            <button (click)="SaveChanges()">Sačuvaj promene</button>
-            <button (click)="CloseEditModal()">Zatvori</button>
+            <button (click)="SaveRecipeInfoChanges()">Sačuvaj promene</button>
+            <button (click)="CancelEditRecipeInfo()">Otkazi</button>
         </div>
         <div>
-            <img [src]="'data:image/jpeg;base64,' + recipe.pictureBase64 " alt="Recipe Picture">
-            <p>Име рецепта: {{recipe.name}}</p>
-            <p>Опис: {{recipe.description}}</p>
-            <p>Време припреме: {{recipe.duration}} минута</p>
-            <p>Број особа: {{recipe.numberOfPeople}}</p>
-            <p>Тежина припреме: {{recipe.difficulty}}</p>
-            <p>Savet kuvara: {{recipe.chefsAdvice}}</p>
+            <img [src]="'data:image/jpeg;base64,' + recipe.recipe.pictureBase64 " alt="Recipe Picture">
+            <p>Име рецепта: {{recipe.recipe.name}}</p>
+            <p>Опис: {{recipe.recipe.description}}</p>
+            <p>Време припреме: {{recipe.recipe.duration}} минута</p>
+            <p>Број особа: {{recipe.recipe.numberOfPeople}}</p>
+            <p>Тежина припреме: {{recipe.recipe.difficulty}}</p>
+            <p>Savet kuvara: {{recipe.recipe.chefsAdvice}}</p>
             <p>Промовисан: {{recipe.isPromoted}}</p>
-            <p>Datum kreiranja: {{recipe.creationDate}}</p>
+            <p>Datum kreiranja: {{recipe.recipe.creationDate}}</p>
+    </div>
+    <button *ngIf="isUserOwnerOfRecipe" (click)="OpenEditIngredientsModal()">Izmeni podatke o sastojcima</button>
+    <div *ngIf="isEditIngredientsModalOpen" class="modal">
+        <h2>Izmeni sastojke</h2>
+        <div *ngFor="let ingredient of recipe.ingredients">
+            <label>
+                Naziv:
+                <input [(ngModel)]="ingredient.name" />
+            </label>
+            <label>
+                Količina:
+                <input [(ngModel)]="ingredient.amount" />
+            </label>
+            <label>
+                Merna jedinica:
+                <input *ngIf="ingredient.measurementUnit!==''" [(ngModel)]="ingredient.measurementUnit" />
+                <select *ngIf="ingredient.measurementUnit===''" [(ngModel)]="ingredient.measurementUnit">
+                    <option value="Gram">г</option>
+                    <option value="Kilogram">кг</option>
+                    <option value="Milliliter">мл</option>
+                    <option value="Liter">л</option>
+                    <option value="Piece">Komad</option>
+                    <option value="Tablespoon">Kašika</option>
+                    <option value="Teaspoon">Kašičica</option>
+                    <option value="Drop">Kapi</option>
+                    <option value="Cup">Šolja</option>
+                    <option value="Slice">Kriška</option>
+                  </select>
+            </label>
+            <button (click)="DeleteIngredient(ingredient)">Obrisi sastojak</button>
+            </div>
+        <button (click)="AddIngredient()">Dodaj sastojak</button>
+        <button (click)="SaveIngredientsChanges()">Sačuvaj promene</button>
+        <button (click)="CancelEditIngredientsModal()">Otkazi</button>
     </div>
     <div>
         <p>Састојци</p>
         <div *ngFor="let ingredient of recipe.ingredients">
-            <p>{{ingredient.name}} - {{ingredient.amount}} {{ingredient.unit}}</p>
+            <p>{{ingredient.name}} - {{ingredient.amount}} {{ingredient.measurementUnit}}</p>
         </div>
+    </div>
+    <button *ngIf="isUserOwnerOfRecipe" (click)="OpenEditStepsModal()">Izmeni podatke o koracima</button>
+    <div *ngIf="isEditStepsModalOpen" class="modal">
+        <h2>Izmeni korake</h2>
+        <div *ngFor="let step of recipe.steps">
+            <label>
+                Redni broj:
+                <input [(ngModel)]="step.sequenceNumber" />
+            </label>
+            <label>
+                Opis:
+                <textarea [(ngModel)]="step.description"></textarea>
+            </label>
+            <button (click)="DeleteStep(step)">Obrisi korak</button>
+        </div>
+        <button (click)="AddStep()">Dodaj korak</button>
+        <button (click)="SaveStepsChanges()">Sačuvaj promene</button>
+        <button (click)="CancelEditStepsModal()">Otkazi</button>
     </div>
     <div>
         <p>Кораци</p>
         <div *ngFor="let step of recipe.steps">
-            <p>{{step.orderNumber}}. {{step.description}}</p>
+            <p>{{step.sequenceNumber}}. {{step.description}}</p>
         </div>
+    </div>
+    <button *ngIf="isUserOwnerOfRecipe" (click)="OpenEditTagsModal()">Izmeni podatke o tagovima</button>
+    <div *ngIf="isEditTagsModalOpen" class="modal">
+        <h2>Izmeni tagove</h2>
+        <div *ngFor="let tag of recipe.tags">
+            <label>
+                Naziv:
+                <input [(ngModel)]="tag.name" />
+            </label>
+            <button (click)="DeleteTag(tag)">Obrisi tag</button>
+        </div>
+        <div>
+            <p>Dostupni tagovi</p>
+            <div *ngFor="let tag of availableTags">
+                <p>{{tag.name}}</p>
+                <button (click)="AddTagToRecipe(tag)">Dodaj tag</button>
+            </div>
+        </div>
+        <button (click)="SaveTagsChanges()">Sačuvaj promene</button>
+        <button (click)="CancelEditTagsModal()">Otkazi</button>
     </div>
     <div>
         <p>Tagovi</p>

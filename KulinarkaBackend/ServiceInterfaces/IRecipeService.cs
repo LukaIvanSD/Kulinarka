@@ -8,7 +8,7 @@ namespace Kulinarka.Interfaces
     {
         Task<Response<List<Recipe>>> GetAllAsync();
         Task<Response<Recipe>> GetByIdAsync(int id);
-        Task<Response<RecipeDTO>> GetByIdWithDetailsAsync(int id);
+        Task<Response<Recipe>> GetByIdWithDetailsAsync(int id);
         Task<Response<Recipe>> AddAsync(User user, Recipe recipe,bool saveChanges=true);
         Task<Response<Recipe>> UpdateAsync(User user, Recipe recipe);
         Task<Response<Recipe>> DeleteAsync(User user, int id);
@@ -19,7 +19,8 @@ namespace Kulinarka.Interfaces
         Task<Response<Recipe>> CommitTransactionAsync();
         Task<Response<Recipe>> RollbackTransactionAsync();
         Task<Response<Recipe>> SaveChangesAsync();
-        Task<Response<Recipe>> UpdateWithDetailsAsync(User user, Recipe recipe);
+        Task<Response<Recipe>> UpdateWithDetailsAsync( Recipe recipe,bool saveChanges=true);
         Task<Response<int>> CountUserRecipes(int userId);
+        Task<Response<bool>> IsUserOwnerOfRecipe(User data, int recipeid);
     }
 }

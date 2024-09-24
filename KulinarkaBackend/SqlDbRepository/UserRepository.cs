@@ -111,5 +111,17 @@ namespace Kulinarka.SqlDbRepository
                 return Response<User>.Failure("Error fetching data: " + ex.Message, StatusCode.InternalServerError);
             }
         }
+
+        public async Task<Response<User>> GetUserAndTitleEagerAsync(int userId)
+        {
+            try
+            {
+                User user = await dbSet.Include(u=>u.UserTitle).ThenInclude(ut=>ut.CurrentTitle).FirstOrDefaultAsync(u=>u.Id==userId);
+                return Response<User>.Success(user, StatusCode.OK);
+            }
+            catch(Exception ex) {
+            return Response<User>.Failure("Error fetching data: " + ex.Message, StatusCode.InternalServerError);
+            }
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace Kulinarka.RepositoryInterfaces
         Task<bool> IsUserUnique(User user);
         Task<Response<User>> GetUserAchievementsEagerAsync(int id);
         Task<Response<User>> GetUserTitleAndStatisticAndRewardsEagerAsync(int userId);
+        Task<Response<User>> GetUserAndTitleEagerAsync(int userId);
     }
 }

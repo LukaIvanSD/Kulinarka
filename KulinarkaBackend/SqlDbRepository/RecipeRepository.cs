@@ -90,9 +90,9 @@ namespace Kulinarka.SqlDbRepository
             try { 
                 Recipe foundRecipe = await dbSet
                     .Include(r=>r.Ingredients).ThenInclude(ri=>ri.Ingredient)
-                    .Include(r=>r.Tags).ThenInclude(rt=>rt.Tag)
-                    .Include(r=>r.PreparationSteps)
-                    .Include(r => r.Promotions).ThenInclude(prr => prr.PromotionReward)
+                    .Include(r=>r.Tags).ThenInclude(rt=>rt.Tag).AsSplitQuery()
+                    .Include(r=>r.PreparationSteps).AsSplitQuery()
+                    .Include(r => r.Promotions).ThenInclude(prr => prr.PromotionReward).AsSplitQuery()
                     .FirstOrDefaultAsync(r => r.Id == id);
                 return Response<Recipe>.Success(foundRecipe, StatusCode.OK);
             }

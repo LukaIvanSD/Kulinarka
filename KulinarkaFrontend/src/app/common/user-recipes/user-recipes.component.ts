@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RecipeService } from '../../Service/recipe.service';
-import {RecipeDetails} from '../../model/recipe'
 import { UserRecipe } from '../../model/userRecipe';
 import { CommonModule } from '@angular/common';
 import { DeleteModalComponent } from '../delete-modal/delete-modal.component';
@@ -8,6 +7,7 @@ import { Recipe as GeneralRecipe } from '../../model/recipe';
 import { FormsModule } from '@angular/forms';
 import { Tag } from '../../model/tag';
 import { filter } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-recipes',
@@ -30,7 +30,7 @@ export class UserRecipesComponent implements OnInit {
   selectedMealTime:string []=[];
   selectedPreparationMethod:string []=[];
   selectedFlavor:string []=[];
-constructor(private recipeService:RecipeService) {
+constructor(private recipeService:RecipeService,private router:Router) {
 }
 ngOnInit(): void {
   this.recipeService.GetUserRecipes().subscribe({
@@ -190,5 +190,8 @@ FilterRecipes():void{
     );
     return hasFlavor || hasMealTime || hasPreparationMethod;
   });
+}
+ShowRecipeDetails(recipeId: number):void{
+    this.router.navigate(['/recipeDetails', recipeId]);
 }
 }
