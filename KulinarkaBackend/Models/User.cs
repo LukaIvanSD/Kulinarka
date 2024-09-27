@@ -58,7 +58,8 @@ namespace Kulinarka.Models
         public virtual UserStatistic? UserStatistic { get; set; }
         [JsonIgnore]
         public virtual ICollection<Recipe>? Recipes { get; set; }
-
+        [JsonIgnore]
+        public virtual ICollection<PreparedRecipeImage> PreparedRecipesImages { get; set; }
         public int AddPoint(RequirementType requirementType)
         {
             int achievementsJustCompleted = 0;
