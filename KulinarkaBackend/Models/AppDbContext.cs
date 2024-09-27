@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.OpenApi.Any;
+using System.Runtime.CompilerServices;
 
 namespace Kulinarka.Models
 {
@@ -23,6 +25,9 @@ namespace Kulinarka.Models
         public DbSet<RecipeIngredient> RecipeIngredient { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<PreparationStep> PreparationStep { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<RecipeStatistics> RecipeStatistics { get; set; }
+        public DbSet<PreparedRecipeImage> PreparedRecipeImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -135,6 +140,35 @@ namespace Kulinarka.Models
                 .Property(t => t.TagType)
                 .HasConversion(tagTypeConverter);
 
+            modelBuilder.Entity<Comment>().HasKey(c => c.Id);
+            modelBuilder.Entity<Comment>().Property(c => c.Text).HasColumnName("Comment");
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Creator)
+                .WithMany()
+                .HasForeignKey(c => c.CreatorId);
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Recipe)
+                .WithMany(r => r.Comments)
+                .HasForeignKey(c => c.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RecipeStatistics>().HasKey(rs => rs.RecipeId);
+            modelBuilder.Entity<RecipeStatistics>()
+                .HasOne(rs => rs.Recipe)
+                .WithOne(r => r.RecipeStatistics)
+                .HasForeignKey<RecipeStatistics>(rs => rs.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PreparedRecipeImage>().HasKey(pri => pri.Id);
+            modelBuilder.Entity<PreparedRecipeImage>()
+                .HasOne(pri => pri.Recipe)
+                .WithMany(r => r.PreparedRecipeImages)
+                .HasForeignKey(pri => pri.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<PreparedRecipeImage>()
+                .HasOne(pri=>pri.Creator)
+                .WithMany(u=>u.PreparedRecipesImages)
+                .HasForeignKey(pri => pri.CreatorId);
 
             base.OnModelCreating(modelBuilder);
 

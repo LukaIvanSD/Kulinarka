@@ -47,7 +47,12 @@ namespace Kulinarka.Models
         public virtual ICollection<RecipeTag>? Tags { get; set; }
         [JsonIgnore]
         public virtual ICollection<PreparationStep>? PreparationSteps { get; set; }
-
+        [JsonIgnore]
+        public virtual ICollection<Comment>? Comments { get; set; }
+        [JsonIgnore]
+        public virtual RecipeStatistics? RecipeStatistics { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<PreparedRecipeImage>? PreparedRecipeImages { get; set; }
         internal DateTime? DatePromoted()
         {
             if (Promotions == null)
