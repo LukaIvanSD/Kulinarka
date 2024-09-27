@@ -85,7 +85,7 @@ builder.Services.AddScoped<IRecipeDetailsService, RecipeDetailsService>();
 builder.Services.AddScoped<IRecipeStatisticsRepository, RecipeStatisticsRepostiory>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IPreparedRecipeImageRepository, PreparedRecipeImageRepository>();
-
+builder.Services.AddScoped<IPreparedRecipeImageService, PreparedRecipeImageService>();
 builder.Services.AddScoped<Func<IAchievementService>>(provider => () => provider.GetService<IAchievementService>());
 builder.Services.AddScoped<Func<IUserService>>(provider => () => provider.GetService<IUserService>());
 
