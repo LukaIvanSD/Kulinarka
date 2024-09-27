@@ -44,6 +44,42 @@ namespace Kulinarka.SqlDbRepository
             return await repository.GetByIdAsync(id);
         }
 
+        public async Task<Response<List<PreparedRecipeImage>>> GetByRecipeIdPagedAsync(int recipeId,int startIndex, int resultCount)
+        {
+            try 
+            { 
+                List<PreparedRecipeImage> preparedRecipeImages = await dbSet
+                    .Where(p => p.RecipeId == recipeId)
+                    .OrderBy(pri=>pri.DateUploaded)
+                    .Skip(startIndex)
+                    .Take(resultCount)
+                    .ToListAsync();
+                return Response<List<PreparedRecipeImage>>.Success(preparedRecipeImages,StatusCode.OK);
+            }
+            catch(Exception ex)
+            {
+                return Response<List<PreparedRecipeImage>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Response<List<PreparedRecipeImage>>> GetByUserIdPagedAsync(int userId,int startIndex,int resultCount)
+        {
+            try
+            {
+                List<PreparedRecipeImage> preparedRecipeImages = await dbSet
+                    .Where(p => p.CreatorId == userId)
+                    .OrderBy(pri => pri.DateUploaded)
+                    .Skip(startIndex)
+                    .Take(resultCount)
+                    .ToListAsync();
+                return Response<List<PreparedRecipeImage>>.Success(preparedRecipeImages, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<List<PreparedRecipeImage>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
         public async Task<Response<PreparedRecipeImage>> RollbackTransactionAsync()
         {
             return await repository.RollbackTransactionAsync();
