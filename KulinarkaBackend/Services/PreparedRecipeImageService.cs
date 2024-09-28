@@ -48,5 +48,19 @@ namespace Kulinarka.Services
                 DateUploaded = DateTime.Now
             };
         }
+
+
+        public async Task<Response<bool>> HasUploadedImageForRecipe(int userId, int recipeId)
+        {
+            var recipeImagesResult = await GetByUserAndRecipeIdAsync(userId, recipeId);
+            if(!recipeImagesResult.IsSuccess)
+                return Response<bool>.Failure(recipeImagesResult.ErrorMessage, recipeImagesResult.StatusCode);
+            return Response<bool>.Success(recipeImagesResult.Data.Count > 0,StatusCode.OK);
+        }
+
+        private async Task<Response<List<PreparedRecipeImage>>> GetByUserAndRecipeIdAsync(int userId, int recipeId)
+        {
+            return await preparedRecipeImageRepository.GetByUserAndRecipeIdAsync(userId, recipeId);
+        }
     }
 }

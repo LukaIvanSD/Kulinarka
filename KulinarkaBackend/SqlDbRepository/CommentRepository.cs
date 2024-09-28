@@ -44,6 +44,23 @@ namespace Kulinarka.SqlDbRepository
             return await repository.GetByIdAsync(id);
         }
 
+        public async Task<Response<List<Comment>>> GetByRecipeIdPagedAsync(int recipeId, int startIndex, int resultSize)
+        {
+            try { 
+                List<Comment> comments = await dbSet
+                    .Where(c => c.RecipeId == recipeId)
+                    .OrderByDescending(c=>c.DateCreated)
+                    .Skip(startIndex)
+                    .Take(resultSize)
+                    .ToListAsync();
+                return Response<List<Comment>>.Success(comments,StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<List<Comment>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
         public async Task<Response<Comment>> RollbackTransactionAsync()
         {
             return await repository.RollbackTransactionAsync();
