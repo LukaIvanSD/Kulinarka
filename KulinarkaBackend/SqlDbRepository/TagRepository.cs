@@ -49,7 +49,7 @@ namespace Kulinarka.SqlDbRepository
         {
             try 
             { 
-                Tag foungTag=dbSet.FirstOrDefault(tag => tag.TagType == preparationTime && tag.Name == name);
+                Tag foungTag=await dbSet.FirstOrDefaultAsync(tag => tag.TagType == preparationTime && tag.Name == name);
                 return Response<Tag>.Success(foungTag, StatusCode.OK);
 
             }

@@ -50,13 +50,28 @@ namespace Kulinarka.SqlDbRepository
             { 
                 List<PreparedRecipeImage> preparedRecipeImages = await dbSet
                     .Where(p => p.RecipeId == recipeId)
-                    .OrderBy(pri=>pri.DateUploaded)
+                    .OrderByDescending(pri=>pri.DateUploaded)
                     .Skip(startIndex)
                     .Take(resultCount)
                     .ToListAsync();
                 return Response<List<PreparedRecipeImage>>.Success(preparedRecipeImages,StatusCode.OK);
             }
             catch(Exception ex)
+            {
+                return Response<List<PreparedRecipeImage>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Response<List<PreparedRecipeImage>>> GetByUserAndRecipeIdAsync(int userId, int recipeId)
+        {
+            try
+            {
+                List<PreparedRecipeImage> preparedRecipeImages = await dbSet
+                    .Where(p => p.CreatorId == userId && p.RecipeId == recipeId)
+                    .ToListAsync();
+                return Response<List<PreparedRecipeImage>>.Success(preparedRecipeImages, StatusCode.OK);
+            }
+            catch (Exception ex)
             {
                 return Response<List<PreparedRecipeImage>>.Failure(ex.Message, StatusCode.InternalServerError);
             }
