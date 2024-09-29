@@ -142,4 +142,57 @@
             <p>{{tag.name}}</p>
         </div>
     </div>
+    <div>
+        <p>Komentari</p>
+        <button (click)="ShowAddCommentForm()" *ngIf="!isUserOwnerOfRecipe">Dodaj komentar </button>
+        <div *ngIf="showCommentForm" class="modal">
+            <h2>Dodaj komentar</h2>
+            <label>
+                Naslov:
+                <input [(ngModel)]="newComment.header" />
+            </label>
+            <label>
+                Tekst:
+                <textarea [(ngModel)]="newComment.text"></textarea>
+            </label>
+            <button (click)="AddComment()">Dodaj komentar</button>
+            <button (click)="CancelAddCommentForm()">Otkazi</button>
+        </div>
+        <div *ngIf="showExtendedCommentForm" class="modal">
+            <h2>Dodaj komentar</h2>
+            <label>
+                Naslov:
+                <input [(ngModel)]="newComment.header" />
+            </label>
+            <label>
+                Tekst:
+                <textarea [(ngModel)]="newComment.text"></textarea>
+            </label>
+            <label>
+                Slika:
+                <input type="file" (change)="UploadImage($event)">
+            </label>
+            <button (click)="AddExtendedComment()">Dodaj komentar</button>
+            <button (click)="CancelAddCommentForm()">Otkazi</button>
+        </div>
+        <div *ngFor="let comment of recipe.comments">
+            <p>{{comment.creatorName}} - {{comment.creatorTitle}} - {{comment.postDate}}</p>
+            <img (click)="ShowProfile(comment.creatorId)"  [src]="'data:image/jpeg;base64,'+comment.creatorPictureBase64">
+            <p>{{comment.header}}</p>
+            <p>{{comment.text}}</p>
+        </div>
+        <button *ngIf="hasMoreComments" (click)="MoreComments()">More comments</button>
+    </div>
+    <div>
+        <p>Slike napravljenih recepata</p>
+        <div *ngFor="let preparedRecipeImage of recipe.preparedRecipeImages">
+            <img [src]="'data:image/jpeg;base64,'+preparedRecipeImage.imageBase64">
+            <img (click)="ShowProfile(preparedRecipeImage.creatorId)" [src]="'data:image/jpeg;base64,'+preparedRecipeImage.creatorPictureBase64">
+            <p>{{preparedRecipeImage.creatorUsername}} - {{preparedRecipeImage.dateUploaded}}</p>
+        </div>
+        <button *ngIf="hasMorePictures" (click)="MorePictures()">More Pictures</button>
+        <input type="file" (change)="UploadImage($event)">Dodaj sliku napravljenog recepta
+        <button *ngIf="isUploadingImage" (click)="PostImage()">Okaci sliku</button>
+        <button *ngIf="isUploadingImage" (click)="CancelUploadImage()"> Otkazi </button>
+    </div>
 </div>

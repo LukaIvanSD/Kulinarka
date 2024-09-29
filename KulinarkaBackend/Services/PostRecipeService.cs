@@ -12,12 +12,14 @@ namespace Kulinarka.Services
         private readonly IRecipeIngredientService recipeIngredientService;
         private readonly IPreparationStepService preparationStepService;
         private readonly IRecipeTagService recipeTagService;
-        public PostRecipeService(IRecipeTagService recipeTagService,IRecipeService recipeService,IRecipeIngredientService recipeIngredientService,IPreparationStepService preparationStepService)
+        private readonly IRecipeStatisticsService recipeStatisticsService;
+        public PostRecipeService(IRecipeTagService recipeTagService,IRecipeService recipeService,IRecipeIngredientService recipeIngredientService,IPreparationStepService preparationStepService,IRecipeStatisticsService recipeStatisticsService)
         {
             this.recipeService = recipeService;
             this.recipeIngredientService = recipeIngredientService;
             this.preparationStepService = preparationStepService;
             this.recipeTagService = recipeTagService;
+            this.recipeStatisticsService = recipeStatisticsService;
         }
         public async Task<Response<Recipe>> AddRecipeAsync(User user,PostRecipeDTO recipeDTO)
         {
@@ -46,6 +48,10 @@ namespace Kulinarka.Services
                     throw new Exception(preparationStepResult.ErrorMessage);
                 newRecipe.PreparationSteps = preparationStepResult.Data;
 
+                var recipeStatisticsResult = await recipeStatisticsService.AddAsync(newRecipe.Id,false);
+                if (!recipeStatisticsResult.IsSuccess)
+                    throw new Exception(recipeStatisticsResult.ErrorMessage);
+                newRecipe.RecipeStatistics = recipeStatisticsResult.Data;
 
                 var saveChangesResult = await recipeService.SaveChangesAsync();
                 if (!saveChangesResult.IsSuccess)

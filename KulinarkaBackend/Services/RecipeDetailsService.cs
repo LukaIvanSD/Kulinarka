@@ -16,7 +16,9 @@ namespace Kulinarka.Services
         private readonly IPreparationStepService preparationStepService;
         private readonly IRecipeIngredientService recipeIngredientService;
         private readonly IRecipeTagService recipeTagService;
-        public RecipeDetailsService(IMapper mapper, IRecipeService recipeService,IUserService userService,IPreparationStepService preparationStepService,IRecipeIngredientService recipeIngredientService,IRecipeTagService recipeTagService)
+        private readonly ICommentService commentService;
+        private readonly IPreparedRecipeImageService preparedRecipeImageService;
+        public RecipeDetailsService(IMapper mapper, IRecipeService recipeService,IUserService userService,IPreparationStepService preparationStepService,IRecipeIngredientService recipeIngredientService,IRecipeTagService recipeTagService,ICommentService commentService,IPreparedRecipeImageService preparedRecipeImageService)
         {
             this.mapper = mapper;
             this.recipeService = recipeService;
@@ -24,6 +26,8 @@ namespace Kulinarka.Services
             this.preparationStepService = preparationStepService;
             this.recipeIngredientService = recipeIngredientService;
             this.recipeTagService = recipeTagService;
+            this.preparedRecipeImageService = preparedRecipeImageService;
+            this.commentService = commentService;
         }
         public async Task<Response<RecipeDetailsDTO>> GetRecipeDetails(int recipeId)
         {
@@ -35,6 +39,17 @@ namespace Kulinarka.Services
             if (!userResult.IsSuccess)
                 return Response<RecipeDetailsDTO>.Failure(userResult.ErrorMessage, userResult.StatusCode);
             recipe.User = userResult.Data;
+            int PageNumber = 1;
+            int PageSize = 5;
+            //Gets first 2 pages of comments
+            var commentsResult = await commentService.GetByRecipePagedWithCreatorEagerAsync(recipe,PageNumber,PageSize);
+            if (!commentsResult.IsSuccess)
+                return Response<RecipeDetailsDTO>.Failure(commentsResult.ErrorMessage, commentsResult.StatusCode);
+            recipe.Comments = commentsResult.Data;
+            var preparedRecipeImagesResult = await preparedRecipeImageService.GetByRecipeIdWithCreatorEagerAsync(recipe.Id,PageNumber,PageSize);
+            if (!preparedRecipeImagesResult.IsSuccess)
+                return Response<RecipeDetailsDTO>.Failure(preparedRecipeImagesResult.ErrorMessage, preparedRecipeImagesResult.StatusCode);
+            recipe.PreparedRecipeImages = preparedRecipeImagesResult.Data;
             RecipeDetailsDTO recipeDetailsDTO = mapper.Map<RecipeDetailsDTO>(recipe);
             return Response<RecipeDetailsDTO>.Success(recipeDetailsDTO, StatusCode.OK);
 

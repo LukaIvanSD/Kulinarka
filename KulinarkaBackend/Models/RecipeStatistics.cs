@@ -16,5 +16,10 @@ namespace Kulinarka.Models
         [JsonIgnore]
         public virtual Recipe? Recipe { get; set; }
 
+        internal bool AddComment()
+        {
+            Comments++;
+            return true;
+        }
     }
 }

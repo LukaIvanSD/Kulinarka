@@ -1,6 +1,7 @@
 ﻿using Kulinarka.DTO;
 using Kulinarka.Interfaces;
 using Kulinarka.ServiceInterfaces;
+using Kulinarka.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kulinarka.Controllers
@@ -16,7 +17,7 @@ namespace Kulinarka.Controllers
             this.preparedRecipeImageService = preparedRecipeImageService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetByUserId([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<IActionResult> GetByUser([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var loginResult =await loginService.GetSessionAsync();
             if (!loginResult.IsSuccess)
@@ -42,15 +43,20 @@ namespace Kulinarka.Controllers
             if (image == null || image.Length == 0)
                 return BadRequest("Image is required");
 
-            using (var memory = new MemoryStream())
-            {
-                await image.CopyToAsync(memory);
-                preparedRecipeImageDTO.Image = memory.ToArray();
-            }
+          preparedRecipeImageDTO.Image= (await UploadFilesService.UploadFileAsync(image)).Data;
 
             var response = await preparedRecipeImageService.UploadImage(loginResult.Data, preparedRecipeImageDTO);
             return HandleResponse(response);
         }
+        [HttpGet("check/{recipeId}")]
+        public async Task<IActionResult> HasUploadedImageForRecipe(int recipeId)
+        {
+            var loginResult = await loginService.GetSessionAsync();
+            if (!loginResult.IsSuccess)
+                return Unauthorized();
 
+            var response = await preparedRecipeImageService.HasUploadedImageForRecipe(loginResult.Data.Id, recipeId);
+            return HandleResponse(response);
+        }
     }
 }

@@ -48,6 +48,16 @@
     <label>{{profile.userStatistics.numberOfRecipes}}</label>
     <label>Омиљени рецепти:</label>
     <label>{{profile.userStatistics.numberOfFavorites}}</label>
+    <button (click)="ShowRecipeImages()">Види све слике:</button>
+    <div *ngIf="showRecipeImages">
+        <div (click)="ShowRecipeDetails(recipeImage.recipeId)" *ngFor="let recipeImage of recipeImages">
+            <img [src]="'data:image/jpeg;base64,' + recipeImage.imageBase64" alt="Recipe Image"/>
+            <p>Date: {{recipeImage.dateUploaded}}</p>
+        </div>
+        <button *ngIf="hasMorePictures" (click)="GetMorePictures()">Учитај још слика:</button>
+
+    </div>
+    
 
     <label>Титула</label>
     <label>Назив:</label>
