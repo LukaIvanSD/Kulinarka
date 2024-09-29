@@ -1,9 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpParams  } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Profile } from '../model/profile';
 import { Observable } from 'rxjs';
 import { User } from '../model/user';
 import { UserInfo } from '../model/profile';
+import { RecipeImage } from '../model/recipeImage';
+
 
 
 @Injectable({
@@ -24,4 +26,12 @@ export class ProfileService {
   ChangePicture(picture:FormData):Observable<string>{
     return this.http.put<string>("https://localhost:7289/Profile/ChangePicture",picture,{withCredentials:true});
   }
+  GetRecipeImages(pageNumber:number,pageSize:number):Observable<RecipeImage[]>{
+    let params = new HttpParams()
+    .set('pageNumber', pageNumber.toString())
+    .set('pageSize', pageSize.toString());
+    return this.http.get<RecipeImage[]>("https://localhost:7289/PreparedRecipeImage", {
+      params: params,
+      withCredentials: true
+    });  }
 }

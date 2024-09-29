@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { UserAchievement } from '../../model/userAchievement';
 import { UserAchievementService } from '../../Service/user-achievement.service';
 import { User } from '../../model/user';
+import { RecipeImage } from '../../model/recipeImage';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -65,7 +67,12 @@ export class ProfileComponent implements OnInit{
   confirmPassword!: string;
   isChangingPicture=false;
   selectedPicture!: FormData;
-  constructor(private profileService: ProfileService,private userAchievementService:UserAchievementService) {}
+  showRecipeImages=false;
+  recipeImages!:RecipeImage[];
+  pageNumber=1;
+  pageSize=1;
+  hasMorePictures=true;
+  constructor(private profileService: ProfileService,private userAchievementService:UserAchievementService,private router :Router) {}
 
   ngOnInit(){
     this.profileService.GetProfile().subscribe({
@@ -152,5 +159,36 @@ SavePictureChanges(){
 }
 CancelChangePicture(){
   this.isChangingPicture = !this.isChangingPicture;
+}
+ShowRecipeImages(){
+  this.showRecipeImages = !this.showRecipeImages;
+  if (!this.recipeImages) {
+    this.profileService.GetRecipeImages(this.pageNumber,this.pageSize).subscribe({
+      next: (data: RecipeImage[]) => {
+        console.log(data);
+        this.recipeImages = data;
+      },
+      error: (err) => {
+        console.error('Error getting recipe images:', err);
+      }
+    });
+}
+}
+GetMorePictures(){
+  this.pageNumber++;
+  this.profileService.GetRecipeImages(this.pageNumber,this.pageSize).subscribe({
+    next: (data: RecipeImage[]) => {
+      this.recipeImages.push(...data);
+      if(data.length<this.pageSize){
+        this.hasMorePictures=false;
+      }
+    },
+    error: (err) => {
+      console.error('Error getting recipe images:', err);
+    }
+  });
+}
+ShowRecipeDetails(recipeId :number){
+  this.router.navigate(['/recipeDetails/',recipeId]);
 }
 }

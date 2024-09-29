@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Recipe, RecipesHome } from '../model/recipe';
-import { RecipeDetails } from '../model/recipeDetails';
+import { PreparedRecipeImage, RecipeDetails } from '../model/recipeDetails';
 import { Observable } from 'rxjs';
 import { UserRecipe } from '../model/userRecipe';
 
@@ -35,5 +35,15 @@ export class RecipeService {
   UpdateRecipe(recipeDetails:RecipeDetails){
     console.log(recipeDetails);
     return this.http.patch('https://localhost:7289/RecipeDetails/',recipeDetails,{withCredentials:true});
+  }
+  GetPreparedRecipeImages(recipeId:number,pageNumber:number,pageSize:Number):Observable<PreparedRecipeImage[]>{
+    let params = new HttpParams().set('pageNumber',pageNumber.toString()).set('pageSize',pageSize.toString());
+    return this.http.get<PreparedRecipeImage[]>('https://localhost:7289/PreparedRecipeImage/'+recipeId,{params});
+  }
+  UploadPreparedRecipeImage(form:FormData):Observable<PreparedRecipeImage>{
+    return this.http.post<PreparedRecipeImage>('https://localhost:7289/PreparedRecipeImage/',form,{withCredentials:true});
+  }
+  HasUserUploadedImage(recipeId:number):Observable<boolean>{
+    return this.http.get<boolean>('https://localhost:7289/PreparedRecipeImage/check/'+recipeId,{withCredentials:true});
   }
 }

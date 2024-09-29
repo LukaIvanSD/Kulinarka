@@ -9,6 +9,8 @@ namespace Kulinarka.DTO
         public List<Tag> Tags { get; set; }
         public List<PreparationStepDTO> Steps { get; set; }
         public UserRecipeDetailsDTO Owner { get; set; }
+        public List<CommentDTO> Comments { get; set; }
+        public List<PreparedRecipeImageResponse> PreparedRecipeImages { get; set; }
         public bool IsPromoted { get; set; }
     }
 }

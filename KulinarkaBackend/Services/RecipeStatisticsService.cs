@@ -34,5 +34,15 @@ namespace Kulinarka.Services
                 AverageRating = 0
             };
         }
+
+        public async Task<Response<RecipeStatistics>> AddCommentStatisticAsync(int recipeId, bool saveChanges = true)
+        {
+            var result = await recipeStatisticsRepository.GetByIdAsync(recipeId);
+            if (!result.IsSuccess)
+                return Response<RecipeStatistics>.Failure(result.ErrorMessage, result.StatusCode);
+            RecipeStatistics recipeStatistics = result.Data;
+            recipeStatistics.AddComment();
+            return await recipeStatisticsRepository.UpdateAsync(recipeStatistics.RecipeId,recipeStatistics, saveChanges);
+        }
     }
 }

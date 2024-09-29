@@ -62,6 +62,25 @@ namespace Kulinarka.SqlDbRepository
             }
         }
 
+        public async Task<Response<List<PreparedRecipeImage>>> GetByRecipeIdPagedWithCreatorEagerAsync(int id, int pageNumber, int pageSize)
+        {
+            try
+            {
+                List<PreparedRecipeImage> preparedRecipeImages = await dbSet
+                    .Where(p => p.RecipeId == id)
+                    .Include(p => p.Creator)
+                    .OrderByDescending(pri => pri.DateUploaded)
+                    .Skip(pageNumber)
+                    .Take(pageSize)
+                    .ToListAsync();
+                return Response<List<PreparedRecipeImage>>.Success(preparedRecipeImages, StatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                return Response<List<PreparedRecipeImage>>.Failure(ex.Message, StatusCode.InternalServerError);
+            }
+        }
+
         public async Task<Response<List<PreparedRecipeImage>>> GetByUserAndRecipeIdAsync(int userId, int recipeId)
         {
             try
